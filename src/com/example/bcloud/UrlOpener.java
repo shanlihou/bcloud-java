@@ -3,10 +3,14 @@ package com.example.bcloud;
 
 import android.util.Log;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,26 +51,35 @@ public class UrlOpener {
             newMap.putAll(this.map);
             newMap.putAll(map);
             HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+            urlConn.setRequestMethod("GET");
+            urlConn.setDoOutput(false);
             urlConn.setDoInput(true);
-            urlConn.setDoOutput(true);
-            urlConn.setUseCaches(false);
+        //    urlConn.setUseCaches(false);
             for (Map.Entry<String, String>entry : newMap.entrySet()) {
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
+            Log.d("shanlihou", "urlopen");
             urlConn.connect();
+            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+            Log.d("shanlihou", "urlopen");
             String result = "";
             String readLine = null;
             while((readLine = bufferedReader.readLine()) != null){
                 result = readLine;
             }
+            Log.d("shanlihou", "urlopen");
             bufferedReader.close();
+            Log.d("shanlihou", "urlopen");
             urlConn.disconnect();
             Log.d("shanlihou", "urlopen");
 
 
         }catch(Exception e){
+            Log.d("shanlihou", "print start\n");
             e.printStackTrace();
+
+            Log.d("shanlihou", "print end\n" + e.getMessage());
         }
         return 0;
     }

@@ -13,7 +13,12 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         Log.d("shanlihou", "hello");
-        AuthManager.getInstance().getBaiduId();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AuthManager.getInstance().getBaiduId();
+            }
+        }).start();
     }
 
 }
