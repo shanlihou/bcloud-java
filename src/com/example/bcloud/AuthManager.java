@@ -8,9 +8,12 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import javax.crypto.Cipher;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URLEncoder;
-import java.security.KeyFactory;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 import java.security.PublicKey;
@@ -58,10 +61,10 @@ public class AuthManager {
         Map<String, String> map = new HashMap<>();
         map.put("Cookie", cookie.getHeader());
         map.put("Accept", ACCEPT_HTML);
-        map.put("Cache-control", "max-age=0" );
+        map.put("Cache-control", "max-age=0");
         HttpContent req = UrlOpener.getInstance().urlOpen(url, map);
         Log.d("shanlihou", req.getHeader().get("Set-Cookie" ).toString());
-        cookie.loadList(req.getHeader().get("Set-Cookie" ));
+        cookie.loadList(req.getHeader().get("Set-Cookie"));
         try {
             JSONTokener jsonParser = new JSONTokener(req.getContent());
             JSONObject json = (JSONObject)jsonParser.nextValue();
@@ -74,14 +77,14 @@ public class AuthManager {
         return 0;
     }
     public int getUbi(Cookie cookie, Map<String, String> tokens){
-        String url = PASSPORT_URL + "?loginhistory" + "&token=" + tokens.get("token" ) +
+        String url = PASSPORT_URL + "?loginhistory" + "&token=" + tokens.get("token") +
                 "&tpl=pp&apiver=v3" + "&tt=" + System.currentTimeMillis();
         Map<String, String> map = new HashMap<>();
         map.put("Cookie", cookie.getHeader());
         map.put("Referer", REFERER);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, map);
         Log.d("shanlihou", req.getHeader().get("Set-Cookie" ).toString());
-        cookie.loadList(req.getHeader().get("Set-Cookie" ));
+        cookie.loadList(req.getHeader().get("Set-Cookie"));
         cookie.logCookie();
         return 0;
     }
@@ -95,8 +98,8 @@ public class AuthManager {
         map.put("Cookie", cookie.getHeader());
         map.put("Referer", REFERER);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, map);
-        cookie.loadList(req.getHeader().get("Set-Cookie" ));
-        Log.d("shanlihou", req.getHeader().get("Set-Cookie" ).toString());
+        cookie.loadList(req.getHeader().get("Set-Cookie"));
+        Log.d("shanlihou", req.getHeader().get("Set-Cookie").toString());
         Log.d("shanlihou", url);
         try {
             JSONTokener jsonParser = new JSONTokener(req.getContent());
@@ -118,8 +121,8 @@ public class AuthManager {
         try {
             JSONTokener jsonParser = new JSONTokener(req.getContent());
             JSONObject json = (JSONObject)jsonParser.nextValue();
-            code.put("pubkey", json.get("pubkey" ).toString());
-            code.put("key", json.get("key" ).toString());
+            code.put("pubkey", json.get("pubkey").toString());
+            code.put("key", json.get("key").toString());
         }catch (JSONException ex) {
             ex.printStackTrace();
         }
@@ -128,32 +131,6 @@ public class AuthManager {
     public int postLogin(Cookie cookie, Map<String, String> tokens, Map<String, String> code, String username,
                          String password){
         String url = PASSPORT_LOGIN;
-        byte[] encPass = null;
-        String basePass = null;
-        try
-        {
-            int index = code.get("pubkey").indexOf("-----END PUBLIC KEY-----");
-            String tmpStr = code.get("pubkey").substring(26, index);
-            Log.d("shanlihou", code.get("pubkey"));
-            Log.d("shanlihou", tmpStr);
-            X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec(
-                    new BASE64Decoder().decodeBuffer(tmpStr));
-            Log.d("shanlihou", new BASE64Decoder().decodeBuffer(tmpStr).toString().length() + "");
-            KeyFactory keyFactory;
-            keyFactory = KeyFactory.getInstance("RSA");
-            // 取公钥匙对象
-            PublicKey publicKey = keyFactory.generatePublic(bobPubKeySpec);
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            encPass = cipher.doFinal(password.getBytes());
-            basePass = new BASE64Encoder().encodeBuffer(encPass).toString();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        Log.d("shanlihou", username);
-        Log.d("shanlihou", new String(encPass));
-
         String data = "staticpage=https%3A%2F%2Fpassport.baidu.com%2Fstatic%2Fpasspc-account%2Fhtml%2Fv3Jump.html" +
                 "&charset=UTF-8" + "&token=" + tokens.get("token") + "&tpl=pp&subpro=&apiver=v3" +
                 "&tt=" + System.currentTimeMillis() + "&codestring=" + code.get("codeString") +
@@ -161,7 +138,7 @@ public class AuthManager {
                 "&quick_user=0&logintype=basicLogin&logLoginType=pc_loginBasic&idc=" + "&loginmerge=true" +
                 "&username=" + URLEncoder.encode(username) +
 //                "&password=" + URLEncoder.encode(new String(encPass)) + "&verifycode=";
-                "&password=" + URLEncoder.encode(basePass) + "&verifycode=";
+                "&password=" + URLEncoder.encode(encrypt(code.get("pubkey"), password)) + "&verifycode=";
         if (code.get("verifyCode") != null){
             data += code.get("verifyCode");
         }
@@ -181,7 +158,77 @@ public class AuthManager {
         req.getInfo();
         return 0;
     }
+
+    public String encrypt(String pubKey, String strToEnc){
+        byte[] encPass = null;
+        String basePass = null;
+        try
+        {
+            int index = pubKey.indexOf("-----END PUBLIC KEY-----");
+            String tmpStr = pubKey.substring(26, index);
+            Log.d("shanlihou", pubKey);
+            Log.d("shanlihou", tmpStr);
+            X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec(tmpStr.getBytes());
+//                    new BASE64Decoder().decodeBuffer(tmpStr));
+            Log.d("shanlihou", new BASE64Decoder().decodeBuffer(tmpStr).toString().length() + "");
+            KeyFactory keyFactory;
+            keyFactory = KeyFactory.getInstance("RSA");
+            // 取公钥匙对象
+            PublicKey publicKey = keyFactory.generatePublic(bobPubKeySpec);
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            encPass = cipher.doFinal(strToEnc.getBytes());
+            String print = new String();
+            for (int i:encPass){
+                print = print + i + " ";
+            }
+            Log.d("shanlihou", print);
+            basePass = new BASE64Encoder().encodeBuffer(encPass).toString();
+
+            Log.d("shanlihou", basePass);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return basePass;
+    }
     public int getSignVcode(){
         return 0;
+    }
+    public void GenKeys() {
+        try {
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            SecureRandom secureRandom = new SecureRandom(new Date().toString().getBytes());
+            keyPairGenerator.initialize(1024, secureRandom);
+            KeyPair keyPair = keyPairGenerator.genKeyPair();
+            String publicKeyFilename = "publicKeyFile.txt";
+            byte[] publicKeyBytes = keyPair.getPublic().getEncoded();
+            FileOutputStream fos = new FileOutputStream(publicKeyFilename);
+            fos.write(publicKeyBytes);
+            fos.close();
+            String privateKeyFilename = "privateKeyFile.txt";
+            byte[] privateKeyBytes = keyPair.getPrivate().getEncoded();
+            fos = new FileOutputStream(privateKeyFilename);
+            fos.write(privateKeyBytes);
+            fos.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public PublicKey get(String filename){
+        try {
+            File f = new File(filename);
+            FileInputStream fis = new FileInputStream(f);
+            DataInputStream dis = new DataInputStream(fis);
+            byte[] keyBytes = new byte[(int) f.length()];
+            dis.readFully(keyBytes);
+            dis.close();
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePublic(spec);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 }

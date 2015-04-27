@@ -51,11 +51,11 @@ public class HttpContent {
                 map.put(key, value);
                 st = en + 1;
             }
-        }
+        }/*
         for (Map.Entry<String, String> entry: map.entrySet()){
             Log.d("shanlihou", "key:" + entry.getKey());
             Log.d("shanlihou", "value:" + entry.getValue());
-        }
+        }*/
 
         return map;
     }

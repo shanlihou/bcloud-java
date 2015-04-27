@@ -49,6 +49,8 @@ public class MyActivity extends Activity {
             }
         });
         Log.d("shanlihou", "hello" );
+        String pubKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwfczbrS0ZW5r+yParkgkxOrPG\ncpQnZ2Th4HzDXwoH/9O/fw7Hsr459QlEuhK6iro2e1a7OD+Si1Lq+gYr7DZ2g3WR\n6XKUBnwNgXn6aflOLpqawgrVH/j8JENvsgnwzVGbCY8vLaEgC9fRJyK5AcH9X5OO\nfPnnHmxbfoS6uBpcCwIDAQAB\n-----END PUBLIC KEY-----";
+        AuthManager.getInstance().encrypt(pubKey, "410015216");
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
