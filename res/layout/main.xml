@@ -21,7 +21,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="login"
-            android:id="@+id/loginButton" android:layout_gravity="right"/>
+            android:id="@+id/loginButton"
+            android:layout_gravity="right"/>
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="btList"
+            android:id="@+id/listButton"
+            />
 
 </LinearLayout>
 

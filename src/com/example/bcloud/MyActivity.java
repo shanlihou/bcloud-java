@@ -1,6 +1,7 @@
 package com.example.bcloud;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,8 @@ public class MyActivity extends Activity {
     private final int USERNAME = 0;
     private final int PASSWORD = 1;
     private Button btnLogin;
+    private Button btnList;
+
     private EditText editUser, editPass;
     private Thread thread;
     private String mUserName;
@@ -37,7 +40,12 @@ public class MyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mActivity = this;
+        cookie = new Cookie(mActivity);
+        tokens = new HashMap<String, String>();
+        cookie.loadAll(tokens);
         btnLogin = (Button)findViewById(R.id.loginButton);
+        btnList = (Button)findViewById(R.id.listButton);
+
         editUser = (EditText)findViewById(R.id.userEdit);
         editPass = (EditText)findViewById(R.id.passEdit);
         editUser.setText("分是否收费");
@@ -50,6 +58,18 @@ public class MyActivity extends Activity {
                 thread.start();
             }
         });
+
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //新建一个显式意图，第一个参数为当前Activity类对象，第二个参数为你要打开的Activity类
+                cookie.getMap(DeliverManager.getInstance().cookie);
+                DeliverManager.getInstance().tokens.clear();
+                DeliverManager.getInstance().tokens.putAll(tokens);
+                Intent intent =new Intent(MyActivity.this, BTActivity.class);
+                startActivity(intent);
+            }
+        });
         Log.d("shanlihou", "hello");
         /*test*/
 //        String pubKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwfczbrS0ZW5r+yParkgkxOrPG\ncpQnZ2Th4HzDXwoH/9O/fw7Hsr459QlEuhK6iro2e1a7OD+Si1Lq+gYr7DZ2g3WR\n6XKUBnwNgXn6aflOLpqawgrVH/j8JENvsgnwzVGbCY8vLaEgC9fRJyK5AcH9X5OO\nfPnnHmxbfoS6uBpcCwIDAQAB\n-----END PUBLIC KEY-----";
@@ -58,15 +78,15 @@ public class MyActivity extends Activity {
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                cookie = new Cookie(mActivity);
-                tokens = new HashMap<String, String>();
+                cookie.clear();
+                tokens.clear();
                 Map<String, String> code = new HashMap<>();
                 List baiduid = AuthManager.getInstance().getBaiduId();
                 cookie.loadList(baiduid);
                 AuthManager.getInstance().getToken(cookie, tokens);
                 Log.d("shanlihou", tokens.toString());
                 cookie.add("cflag=65535%3A1;");
-                cookie.add("PANWEB=1;" );
+                cookie.add("PANWEB=1;");
                 Log.d("shanlihou", "get ubi");
                 AuthManager.getInstance().getUbi(cookie, tokens);
                 Log.d("shanlihou", "checklogin");
@@ -75,8 +95,7 @@ public class MyActivity extends Activity {
                 AuthManager.getInstance().getPublicKeyString(cookie, tokens, code);
                 AuthManager.getInstance().postLogin(cookie, tokens, code, mUserName, mPassWord);
                 AuthManager.getInstance().get_bdsToken(cookie, tokens);
-                cookie.saveCookie();
-                cookie.showCookie();
+                cookie.saveAll(tokens);
             }
         });
     }

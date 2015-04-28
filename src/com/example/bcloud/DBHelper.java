@@ -11,6 +11,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.Map;
+
 /**
  * Created by Administrator on 2015/1/17 0017.
  */
@@ -84,6 +86,41 @@ public class DBHelper extends SQLiteOpenHelper {
             db.delete(TABLE_NAME_COOKIE, where, whereValue);
         }else{
             db.delete(TABLE_NAME_TOKENS, where, whereValue);
+        }
+    }
+    public void deleteAll(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (id == 0){
+            db.delete(TABLE_NAME_COOKIE, null, null);
+        }else{
+            db.delete(TABLE_NAME_TOKENS, null, null);
+        }
+    }
+
+    public void saveMap(int id, Map<String, String> map){
+        deleteAll(id);
+        for(Map.Entry<String, String> entry: map.entrySet()){
+            insert(id, entry.getKey(), entry.getValue());
+        }
+    }
+
+    public void showDB(int id){
+        Cursor cursor = query(id);
+        if (cursor.moveToFirst()){
+            do{
+                String key = cursor.getString(1);
+                String value = cursor.getString(2);
+                Log.d("shanlihou", key + ":" + value);
+            }while(cursor.moveToNext());
+        }
+    }
+
+    public void loadMap(int id, Map<String, String> map){
+        Cursor cursor = query(id);
+        if (cursor.moveToFirst()){
+            do{
+                map.put(cursor.getString(1), cursor.getString(2));
+            }while(cursor.moveToNext());
         }
     }
     private ContentValues createValues(String title, String location) {

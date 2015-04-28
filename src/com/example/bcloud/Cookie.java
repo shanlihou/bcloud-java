@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 public class Cookie {
 //    private Map<String, String> cookie;
     private Map<String, String> cookie;
+    private static Cookie instance = null;
     DBHelper db;
 //    String _LegalCharsPatt  = "[\\w\\d!#%&'~_`><@,:/\\$\\*\\+\\-\\.\\^\\|\\)\\(\\?\\}\\{\\=]";
     /*Pattern _CookiePattern = Pattern.compile(
@@ -32,7 +33,12 @@ public class Cookie {
     public Cookie(Context context){
         cookie = new HashMap<>();
         db = new DBHelper(context);
+        instance = this;
     }
+    public static Cookie getInstance(){
+        return instance;
+    }
+
 
     public int loadList(List<String> list){
         for (int i = 0; i < list.size(); i++){
@@ -82,23 +88,28 @@ public class Cookie {
         }
         return 0;
     }
-    public int saveCookie(){
-        for (Map.Entry<String, String> entry: cookie.entrySet()){
-            db.insert(0, entry.getKey(), entry.getValue());
-        }
+    public int saveAll(Map<String, String> tokens){
+        db.saveMap(0, cookie);
+        db.saveMap(1, tokens);
         return 0;
     }
 
-    public int showCookie(){
-        Cursor cursor = db.query(0);
-        Log.d("shanlihou", "show db");
-        if (cursor.moveToFirst()){
-            do {
-                String key = cursor.getString(1);
-                String value = cursor.getString(2);
-                Log.d("shanlihou", key + ":" + value);
-            }while(cursor.moveToNext());
-        }
+    public void loadAll(Map<String, String> tokens){
+        db.loadMap(0, cookie);
+        db.loadMap(1, tokens);
+    }
+
+    public void clear(){
+        cookie.clear();
+    }
+
+    public int showAll(){
+        db.showDB(0);
+        db.showDB(1);
         return 0;
+    }
+    public void getMap(Map<String, String> map){
+        map.clear();
+        map.putAll(cookie);
     }
 }
