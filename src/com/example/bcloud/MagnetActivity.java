@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -23,6 +24,7 @@ public class MagnetActivity extends Activity{
     private Context mContext;
     private SimpleAdapter simpleAdapter;
     private String code;
+    private String addUrl = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +33,19 @@ public class MagnetActivity extends Activity{
         mContext = this;
         Bundle bundle = getIntent().getExtras();
         code = bundle.getString("code");
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                HashMap<String, String> item = (HashMap<String, String>)adapterView.getItemAtPosition(i);
+                addUrl = item.get("magUrl");
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        addBtTask();
+                    }
+                }).start();
+            }
+        });
         mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -62,5 +77,16 @@ public class MagnetActivity extends Activity{
             }
         });
         thread.start();
+
+    }
+
+    private void addBtTask(){
+        Log.d("shanlihou", "addurl:" + addUrl);
+        AuthManager.getInstance().printBytes(addUrl.getBytes());
+        /*
+        List<String> selectIds = PcsManager.getInstance().queryMagnetInfo(Cookie.getInstance(), DeliverManager.tokens,
+                addUrl, "/");
+        PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens,
+                addUrl, "/", selectIds, "", "", "");*/
     }
 }

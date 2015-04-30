@@ -83,6 +83,7 @@ public class PcsManager {
                 "&bdstoken=&bdstoken=" + tokens.get("bdstoken");
         String data = "method=query_magnetinfo&app_id=250528" + "&source_url=" + URLEncoder.encode(sourceUrl) +
                 "&save_path=" + URLEncoder.encode(savePath) + "&type=4";
+        Log.d("shanlihou", data);
         Map<String, String> map = new HashMap<>();
         map.put("Cookie", cookie.getHeader());
         HttpContent req = UrlOpener.getInstance().urlPost(url, map, data);

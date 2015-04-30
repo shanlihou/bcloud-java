@@ -44,7 +44,12 @@ public class MyActivity extends Activity {
         mActivity = this;
         cookie = new Cookie(mActivity);
         tokens = new HashMap<String, String>();
+
         cookie.loadAll(tokens);
+        cookie.getMap(DeliverManager.getInstance().cookie);
+        DeliverManager.getInstance().tokens.clear();
+        DeliverManager.getInstance().tokens.putAll(tokens);
+
         btnLogin = (Button)findViewById(R.id.loginButton);
         btnList = (Button)findViewById(R.id.listButton);
         btnSow = (Button)findViewById(R.id.sowGrid);
@@ -67,9 +72,6 @@ public class MyActivity extends Activity {
             @Override
             public void onClick(View view) {
                 //新建一个显式意图，第一个参数为当前Activity类对象，第二个参数为你要打开的Activity类
-                cookie.getMap(DeliverManager.getInstance().cookie);
-                DeliverManager.getInstance().tokens.clear();
-                DeliverManager.getInstance().tokens.putAll(tokens);
                 Intent intent = new Intent(MyActivity.this, BTActivity.class);
                 startActivity(intent);
             }
@@ -120,6 +122,9 @@ public class MyActivity extends Activity {
                 AuthManager.getInstance().postLogin(cookie, tokens, code, mUserName, mPassWord);
                 AuthManager.getInstance().get_bdsToken(cookie, tokens);
                 cookie.saveAll(tokens);
+                cookie.getMap(DeliverManager.getInstance().cookie);
+                DeliverManager.getInstance().tokens.clear();
+                DeliverManager.getInstance().tokens.putAll(tokens);
             }
         });
     }
