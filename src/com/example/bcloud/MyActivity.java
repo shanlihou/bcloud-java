@@ -26,6 +26,7 @@ public class MyActivity extends Activity {
     private final int PASSWORD = 1;
     private Button btnLogin;
     private Button btnList;
+    private Button btnSow;
 
     private EditText editUser, editPass;
     private Thread thread;
@@ -34,6 +35,7 @@ public class MyActivity extends Activity {
     private Cookie cookie;
     private Map<String, String> tokens;
     private Activity mActivity;
+    private Button btnMag;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class MyActivity extends Activity {
         cookie.loadAll(tokens);
         btnLogin = (Button)findViewById(R.id.loginButton);
         btnList = (Button)findViewById(R.id.listButton);
+        btnSow = (Button)findViewById(R.id.sowGrid);
+        btnMag = (Button)findViewById(R.id.magTest);
 
         editUser = (EditText)findViewById(R.id.userEdit);
         editPass = (EditText)findViewById(R.id.passEdit);
@@ -66,7 +70,27 @@ public class MyActivity extends Activity {
                 cookie.getMap(DeliverManager.getInstance().cookie);
                 DeliverManager.getInstance().tokens.clear();
                 DeliverManager.getInstance().tokens.putAll(tokens);
-                Intent intent =new Intent(MyActivity.this, BTActivity.class);
+                Intent intent = new Intent(MyActivity.this, BTActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnSow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MyActivity.this, SowActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnMag.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.setClass(MyActivity.this, MagnetActivity.class);
+                Bundle mBundle = new Bundle();
+                mBundle.putString("code", "wanz-213");//压入数据
+                intent.putExtras(mBundle);
                 startActivity(intent);
             }
         });

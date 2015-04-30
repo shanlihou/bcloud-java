@@ -1,13 +1,14 @@
 package com.example.bcloud;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import org.apache.http.util.ByteArrayBuffer;
 
 import javax.net.ssl.*;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.KeyStore;
@@ -51,12 +52,12 @@ public class UrlOpener {
         HttpContent ret = null;
         Log.d("shanlihou", strUrl);
         try {
-            SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[]{myX509TrustManager}, null);
             URL url = new URL(strUrl);
             Map<String, String> newMap = new HashMap<String, String>();
             newMap.putAll(this.map);
-            newMap.putAll(map);
+            if (map != null){
+                newMap.putAll(map);
+            }
             HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
 //            urlConn.setSSLSocketFactory(sslcontext.getSocketFactory());
             urlConn.setRequestMethod("GET");
@@ -110,8 +111,6 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
         HttpContent ret = null;
         Log.d("shanlihou", strUrl);
         try {
-            SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, new TrustManager[]{myX509TrustManager}, null);
             URL url = new URL(strUrl);
             Map<String, String> newMap = new HashMap<String, String>();
             newMap.putAll(this.map);
@@ -169,23 +168,55 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
         }
         return ret;
     }
-    private static TrustManager myX509TrustManager = new X509TrustManager() {
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return null;
+    public Bitmap getImageBmp(String strUrl){
+        Bitmap bitmap = null;
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+            urlConn.setRequestMethod("GET");
+            urlConn.setDoOutput(false);
+            urlConn.setDoInput(true);
+            urlConn.connect();
+            InputStream is = urlConn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            urlConn.disconnect();
+            is.close();
+        }catch(Exception e){
+            e.printStackTrace();
         }
+        return bitmap;
+    }
+    /*
+    public Uri getImageURI(String path, File cache) throws Exception {
 
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
-        }
+        File file = new File(cache, name);
+        // 如果图片存在本地缓存目录，则不去服务器下载
+        if (file.exists()) {
+            return Uri.fromFile(file);//Uri.fromFile(path)这个方法能得到文件的URI
+        } else {
+            // 从网络上获取图片
+            URL url = new URL(path);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            conn.setDoInput(true);
+            if (conn.getResponseCode() == 200) {
 
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+                InputStream is = conn.getInputStream();
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
+                // 返回一个URI对象
+                return Uri.fromFile(file);
+            }
         }
-    };
+        return null;
+    }*/
 
 }
 

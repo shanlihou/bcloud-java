@@ -71,6 +71,11 @@ public class BTActivity extends Activity{
             public void run() {
                 List<String> ids = PcsManager.getInstance().listTask(Cookie.getInstance(), DeliverManager.tokens);
                 PcsManager.getInstance().queryTask(Cookie.getInstance(), DeliverManager.tokens, ids, btList);
+                List<String> selectIds = PcsManager.getInstance().queryMagnetInfo(Cookie.getInstance(), DeliverManager.tokens, "magnet:?xt=urn:btih:470729D8746976D21828EF6075F144B3D6EB151F&dn=WANZ-317",
+                        "/");
+                PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens, "magnet:?xt=urn:btih:470729D8746976D21828EF6075F144B3D6EB151F&dn=WANZ-317",
+                        "/", selectIds, "", "", "");
+                MagnetManager.getInstance().getHomePage("wanz-317");
                 Message message = new Message();
                 message.what = 1;
                 mHandler.sendMessage(message);

@@ -28,6 +28,14 @@
             android:text="btList"
             android:id="@+id/listButton"
             />
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="sowGrid"
+            android:id="@+id/sowGrid"
+            />
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="magTest"
+            android:id="@+id/magTest"/>
 
 </LinearLayout>
 
