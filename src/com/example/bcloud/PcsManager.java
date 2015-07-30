@@ -1,10 +1,19 @@
 package com.example.bcloud;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,8 +89,9 @@ public class PcsManager {
 
     public List<String> queryMagnetInfo(Cookie cookie, Map<String, String> tokens, String sourceUrl, String savePath){
         String url = PAN_URL + "rest/2.0/services/cloud_dl?channel=chunlei&clienttype=0&web=1" +
-                "&bdstoken=&bdstoken=" + tokens.get("bdstoken");
-        String data = "method=query_magnetinfo&app_id=250528" + "&source_url=" + URLEncoder.encode(sourceUrl) +
+                "&bdstoken=" + tokens.get("bdstoken");
+        String data = "";
+        data = "method=query_magnetinfo&app_id=250528" + "&source_url=" + URLEncoder.encode(sourceUrl) +
                 "&save_path=" + URLEncoder.encode(savePath) + "&type=4";
         Log.d("shanlihou", data);
         Map<String, String> map = new HashMap<>();
@@ -91,6 +101,12 @@ public class PcsManager {
         try {
             JSONTokener jsonTokener = new JSONTokener(req.getContent());
             JSONObject jsonObject = (JSONObject)jsonTokener.nextValue();
+            if (!jsonObject.isNull("error_code")){
+                selectList.add("error");
+                selectList.add("" + jsonObject.getInt("error_code"));
+                selectList.add(jsonObject.getString("error_msg"));
+                return selectList;
+            }
             JSONArray jsonArray = (JSONArray)jsonObject.get("magnet_info");
             for(int i = 0; i < jsonArray.length(); i++){
                 JSONObject tmp = (JSONObject)jsonArray.get(i);
@@ -99,6 +115,7 @@ public class PcsManager {
                         || filename.endsWith(".wmv")
                         || filename.endsWith(".avi")
                         || filename.endsWith(".rmvb")
+                        || filename.endsWith(".flv")
                         || filename.endsWith(".mkv")) {
                     selectList.add((i + 1) + "");
                 }
@@ -109,18 +126,12 @@ public class PcsManager {
 
         return selectList;
     }
-    public void addBtTask(Cookie cookie, Map<String, String> tokens, String sourceUrl,
-                          String savePath, List<String> selectIds, String file_sha1,
+    public String addBtTask(Cookie cookie, Map<String, String> tokens, String sourceUrl,
+                          String savePath, String strIds, String file_sha1,
                           String vcode, String vcodeInput){
         String url = PAN_URL + "rest/2.0/services/cloud_dl?channel=chunlei&clienttype=0&web=1" +
                 "&bdstoken=" + tokens.get("bdstoken");
-        String strIds = "";
-        for (int i = 0; i < selectIds.size(); i++){
-            if (i != 0){
-                strIds += ",";
-            }
-            strIds += selectIds.get(i);
-        }
+
         String data = "method=add_task&app_id=250528" + "&file_sha1=" + file_sha1 +
                 "&save_path=" + URLEncoder.encode(savePath) + "&selected_idx=" + strIds +
                 "&task_from=1" + "&t=" + System.currentTimeMillis() + "&" + "source_url" +
@@ -131,7 +142,13 @@ public class PcsManager {
         Map<String, String> map = new HashMap<>();
         map.put("Cookie", cookie.getHeader());
         HttpContent req = UrlOpener.getInstance().urlPost(url, map, data);
-
-
+        return req.getContent();
     }
+    public Bitmap getVcodeBmp(String url, Cookie cookie){
+        Map<String, String> map = new HashMap<>();
+        map.put("Cookie", cookie.getHeader());
+        HttpContent req = UrlOpener.getInstance().urlOpen(url, map);
+        return UrlOpener.getInstance().convertStringToIcon(req.getContent());
+    }
+
 }

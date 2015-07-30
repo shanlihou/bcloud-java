@@ -69,19 +69,16 @@ public class BTActivity extends Activity{
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                /*
                 List<String> ids = PcsManager.getInstance().listTask(Cookie.getInstance(), DeliverManager.tokens);
-                PcsManager.getInstance().queryTask(Cookie.getInstance(), DeliverManager.tokens, ids, btList);
+                PcsManager.getInstance().queryTask(Cookie.getInstance(), DeliverManager.tokens, ids, btList);*/
                 List<String> selectIds = PcsManager.getInstance().queryMagnetInfo(Cookie.getInstance(), DeliverManager.tokens, "magnet:?xt=urn:btih:470729D8746976D21828EF6075F144B3D6EB151F&dn=WANZ-317",
                         "/");
-                PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens, "magnet:?xt=urn:btih:470729D8746976D21828EF6075F144B3D6EB151F&dn=WANZ-317",
-                        "/", selectIds, "", "", "");
 
                 selectIds.clear();
                 String testUrl = "magnet:?xt=urn:btih:BC988FD3EE934AC32A348260C95A8351A77B52C4&dn=WANZ-213%E2%80%93%20Yuu%20Asakura%20%28%E9%BA%BB%E5%80%89%E6%86%82%29%20%E2%80%93%20%E7%94%9F%E5%BE%92%E3%81%AB%E8%87%AA%E5%AE%85%E3%82%92%E4%B9%97%E3%81%A3%E5%8F%96%E3%82%89%E3%82%8C%E3%81%9F%E8%8B%A5%E5%A6%BB%E5%A5%B3%E6%95%99%E5%B8%AB%20%E7%BE%8E%E4%BA%BA%E5%A6%BB%E3%81%8C%E5%A5%B4%E9%9A%B7%E3%83%9A%E3%83%83%E3%83%88%E3%81%A8%E5%8C%96%E3%81%993%E6%97%A5%E9%96%93%E3%81%AE%E5%87%8C%E8%BE%B1%E5%8A%87.mp4";
                 selectIds = PcsManager.getInstance().queryMagnetInfo(Cookie.getInstance(), DeliverManager.tokens, testUrl,
                         "/");
-                PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens, testUrl,
-                        "/", selectIds, "", "", "");
                 Message message = new Message();
                 message.what = 1;
                 mHandler.sendMessage(message);

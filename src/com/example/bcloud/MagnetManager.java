@@ -27,10 +27,13 @@ public class MagnetManager {
         List<Map<String , String>> ret = new ArrayList<>();
         int index = 0, start, end;
         int flag = 0;
-        String url = "http://www.btspread.com/search/" + URLEncoder.encode(code);
+        String url = "http://www.btava.com/search/" + URLEncoder.encode(code);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, null);
-        String pat = "http://www.btspread.com/magnet/detail/hash/";
+        String pat = "http://www.btava.com/magnet/detail/hash/";
         String sizePat = "files-size\">";
+        if (req == null || req.getContent() == null){
+            return ret;
+        }
         while(true){
             start = req.getContent().indexOf(pat, index);
             if (start == -1){

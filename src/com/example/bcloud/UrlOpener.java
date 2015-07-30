@@ -4,6 +4,7 @@ package com.example.bcloud;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Base64;
 import android.util.Log;
 import org.apache.http.util.ByteArrayBuffer;
 
@@ -71,9 +72,8 @@ public class UrlOpener {
             urlConn.connect();
             Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             String encoding = urlConn.getHeaderField("Content-encoding");
-            Log.d("shanlihou", "urlopen");
             String result = "";
-            Log.d("shanlihou", "urlopen");
+            Log.d("shanlihou", "gzip:" + encoding);
             if (encoding != null && encoding.equals("gzip")){
                 int num;
                 byte[] tmp = new byte[4096];
@@ -89,11 +89,12 @@ public class UrlOpener {
                 String readLine = null;
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
                 while((readLine = bufferedReader.readLine()) != null){
-                    result = readLine;
+                    Log.d("shanlihou", "read len:" + readLine.length());
+                    result += readLine;
                 }
                 bufferedReader.close();
             }
-            Log.d("shanlihou", "urlopen");
+            Log.d("shanlihou", "length" + result.length());
 
             ret = new HttpContent(urlConn.getHeaderFields(), result);
             urlConn.disconnect();
@@ -120,11 +121,12 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             urlConn.setRequestMethod("POST");
             urlConn.setDoOutput(true);
             urlConn.setDoInput(true);
-        //    urlConn.setUseCaches(false);
+            urlConn.setUseCaches(false);
             for (Map.Entry<String, String>entry : newMap.entrySet()) {
                 Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
+            Log.d("shanlihou", "data:" + data);
             urlConn.connect();
             DataOutputStream dop = new DataOutputStream(urlConn.getOutputStream());
             dop.writeBytes(data);
@@ -132,14 +134,18 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             dop.close();
             Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             String encoding = urlConn.getHeaderField("Content-encoding");
-            Log.d("shanlihou", "urlopen");
             String result = "";
-            Log.d("shanlihou", "urlopen");
+            int retCode = urlConn.getResponseCode();
             if (encoding != null && encoding.equals("gzip")){
                 int num;
                 byte[] tmp = new byte[4096];
                 ByteArrayBuffer bt = new ByteArrayBuffer(4096);
-                GZIPInputStream gis = new GZIPInputStream(urlConn.getInputStream());
+                GZIPInputStream gis;
+                if (retCode != 200){
+                    gis = new GZIPInputStream(urlConn.getErrorStream());
+                }else {
+                    gis = new GZIPInputStream(urlConn.getInputStream());
+                }
                 while((num = gis.read(tmp)) != -1){
                     bt.append(tmp, 0, num);
                 }
@@ -148,17 +154,21 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             }
             else{
                 String readLine = null;
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+                BufferedReader bufferedReader;
+                if (retCode != 200){
+                    bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getErrorStream()));
+                }else {
+                    bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+                }
                 while((readLine = bufferedReader.readLine()) != null){
-                    result = readLine;
+                    result += readLine;
                 }
                 bufferedReader.close();
             }
-            Log.d("shanlihou", "urlopen");
 
             ret = new HttpContent(urlConn.getHeaderFields(), result);
             urlConn.disconnect();
-            Log.d("shanlihou", "urlopen:" + result);
+            Log.d("shanlihou", "req.data:" + result);
 
         }catch(Exception e){
             Log.d("shanlihou", "print start\n");
@@ -167,6 +177,35 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             Log.d("shanlihou", "print end\n" + e.getMessage());
         }
         return ret;
+    }public Bitmap getVCode(String strUrl, Map<String, String> map){
+        Bitmap bitmap = null;
+        try {
+            URL url = new URL(strUrl);
+            Map<String, String> newMap = new HashMap<String, String>();
+            newMap.putAll(this.map);
+            if (map != null){
+                newMap.putAll(map);
+            }
+            HttpURLConnection urlConn = (HttpURLConnection)url.openConnection();
+//            urlConn.setSSLSocketFactory(sslcontext.getSocketFactory());
+            urlConn.setRequestMethod("GET");
+            urlConn.setDoOutput(false);
+            urlConn.setDoInput(true);
+        //    urlConn.setUseCaches(false);
+            for (Map.Entry<String, String>entry : newMap.entrySet()) {
+                Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
+                urlConn.setRequestProperty(entry.getKey(), entry.getValue());
+            }
+            urlConn.connect();
+            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
+            bitmap = BitmapFactory.decodeStream(urlConn.getInputStream());
+
+            urlConn.disconnect();
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return bitmap;
     }
     public Bitmap getImageBmp(String strUrl){
         Bitmap bitmap = null;
@@ -186,6 +225,32 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
         }
         return bitmap;
     }
+    public Bitmap convertStringToIcon(String st)
+    {
+        // OutputStream out;
+        Bitmap bitmap = null;
+        try
+        {
+            // out = new FileOutputStream("/sdcard/aa.jpg");
+            byte[] bitmapArray;/*
+            bitmapArray = Base64.decode(st, Base64.DEFAULT);*/
+            bitmap = BitmapFactory.decodeByteArray(st.getBytes(), 0,
+                            st.getBytes().length);
+            AuthManager.getInstance().printBytes(st.getBytes());
+            if(bitmap == null){
+                Log.d("shanlihou", "bitmap null");
+            }
+            return bitmap;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
     /*
     public Uri getImageURI(String path, File cache) throws Exception {
 

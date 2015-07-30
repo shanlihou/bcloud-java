@@ -27,9 +27,7 @@ public class Cookie {
             "\\s*=\\s*" +
             "(?P<val>" + "\"(?:[^\\\\\"]|\\\\.)*\"" +
             "|\\w{3},\\s[\\w\\d\\s-]{9,11}\\s[\\d:]{8}\\sGMT" +
-            "|" +
-            _LegalCharsPatt + "*))?\\s*(\\s+|;|$)");*/
-
+            "|" + _LegalCharsPatt + "*))?\\s*(\\s+|;|$)");*/
     public Cookie(Context context){
         cookie = new HashMap<>();
         db = new DBHelper(context);
@@ -111,5 +109,9 @@ public class Cookie {
     public void getMap(Map<String, String> map){
         map.clear();
         map.putAll(cookie);
+    }
+
+    public DBHelper getDb(){
+       return db;
     }
 }

@@ -256,6 +256,7 @@ public class AuthManager {
         for (int i:encPass){
             print = print + i + " ";
         }
+        Log.d("shanlihou", encPass.length + "");
         Log.d("shanlihou", print);
     }
     public int getSignVcode(){

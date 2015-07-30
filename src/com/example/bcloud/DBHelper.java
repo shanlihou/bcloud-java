@@ -23,6 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private final static String TABLE_NAME_COOKIE = "cookie";
     private final static String TABLE_NAME_TOKENS = "tokens";
+    private final static String TABLE_NAME_STATUS = "status";
 
     public final static String FIELD_ID = "_id";
 
@@ -39,6 +40,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 + FIELD_KEY + " text, " + FIELD_VALUE + " text );";
         db.execSQL(sql);
         sql = "Create table " + TABLE_NAME_TOKENS + "(" + FIELD_ID + " integer primary key autoincrement,"
+                + FIELD_KEY + " text, " + FIELD_VALUE + " text );";
+        db.execSQL(sql);
+        Log.d("shanlihou", "add status");
+        sql = "Create table " + TABLE_NAME_STATUS + "(" + FIELD_ID + " integer primary key autoincrement,"
                 + FIELD_KEY + " text, " + FIELD_VALUE + " text );";
         db.execSQL(sql);
     }
@@ -128,6 +133,28 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put(FIELD_KEY, title);
         cv.put(FIELD_VALUE, location);
         return cv;
+    }
+
+    public void modifyPage(int page){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor c = db.rawQuery("select * from status where key=?", new String[]{"page"});
+        if(c.moveToFirst()) {
+            String sql = "update [status] set value = '" + page + "' where key='page'";//修改的SQL语句
+            db.execSQL(sql);//执行修改`
+        }
+        else{
+            db.insert(TABLE_NAME_STATUS, null, createValues("page", "" + page));
+        }
+    }
+    public int getPage(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("select * from status where key=?", new String[]{"page"});
+        Log.d("shanlihou", "get page");
+        if (c.moveToFirst()){
+            Log.d("shanlihou", c.getInt(2) + "");
+            return c.getInt(2);
+        }
+        return 1;
     }
 }
 
