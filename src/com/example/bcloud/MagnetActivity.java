@@ -36,6 +36,9 @@ public class MagnetActivity extends Activity{
     private Bitmap codeBmp;
     private String vCodeDialog;
     private TextView statText;
+    private EditText searchText;
+    private Button searchButton;
+    private Runnable searchRun = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +48,12 @@ public class MagnetActivity extends Activity{
         Bundle bundle = getIntent().getExtras();
         code = bundle.getString("code");
         mBtAdd = new HashMap<>();
+
+        searchText = (EditText)findViewById(R.id.searchCode);
+        searchButton = (Button)findViewById(R.id.searchButton);
         statText = (TextView)findViewById(R.id.statText);
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -75,12 +83,14 @@ public class MagnetActivity extends Activity{
                         Map<String, String> map = new HashMap<>();
                         map.put("magUrl", "nothing");
                         map.put("magSize", "nothing");
+                        map.put("magTitle", "nothing");
                         magList.add(map);
                     }
                     simpleAdapter = new SimpleAdapter(mContext, magList, R.layout.mag_item,
-                            new String[]{"magUrl", "magSize"},
-                            new int[]{R.id.magUrl, R.id.magSize});
+                            new String[]{"magUrl", "magSize", "magTitle"},
+                            new int[]{R.id.magUrl, R.id.magSize, R.id.magTitle});
                     listView.setAdapter(simpleAdapter);
+                    searchButton.setEnabled(true);
                 }else if(msg.what == 2){
                     mBtRet = (Map<String, String>)msg.obj;
                     Log.d("shanlihou", "has toast");
@@ -124,7 +134,7 @@ public class MagnetActivity extends Activity{
             }
 
         };
-        thread = new Thread(new Runnable() {
+        searchRun = new Runnable() {
             @Override
             public void run() {
                 Message message = new Message();
@@ -132,9 +142,17 @@ public class MagnetActivity extends Activity{
                 message.obj = MagnetManager.getInstance().getHomePage(code);
                 mHandler.sendMessage(message);
             }
+        };
+        new Thread(searchRun).start();
+        searchButton.setEnabled(false);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                code = searchText.getText().toString();
+                new Thread(searchRun).start();
+                searchButton.setEnabled(false);
+            }
         });
-        thread.start();
-
     }
 
     private Map<String, String> addBtTask(Map<String, String> mapArg){

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -29,13 +30,13 @@ public class MyActivity extends Activity {
     private Button btnSow;
 
     private EditText editUser, editPass;
-    private Thread thread;
     private String mUserName;
     private String mPassWord;
     private Cookie cookie;
     private Map<String, String> tokens;
     private Activity mActivity;
     private Button btnMag;
+    private Runnable loginRun = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class MyActivity extends Activity {
         editPass = (EditText)findViewById(R.id.passEdit);
         editUser.setText("分是否收费");
         editPass.setText("410015216");
+        editPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
         ImageManager.getInstance().mkdir("/sdcard/bcloud/sowImage");
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +68,7 @@ public class MyActivity extends Activity {
             public void onClick(View view) {
                 mUserName = editUser.getText().toString();
                 mPassWord = editPass.getText().toString();
-                thread.start();
+                new Thread(loginRun).start();
             }
         });
 
@@ -104,7 +106,8 @@ public class MyActivity extends Activity {
 //        String pubKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwfczbrS0ZW5r+yParkgkxOrPG\ncpQnZ2Th4HzDXwoH/9O/fw7Hsr459QlEuhK6iro2e1a7OD+Si1Lq+gYr7DZ2g3WR\n6XKUBnwNgXn6aflOLpqawgrVH/j8JENvsgnwzVGbCY8vLaEgC9fRJyK5AcH9X5OO\nfPnnHmxbfoS6uBpcCwIDAQAB\n-----END PUBLIC KEY-----";
 //        AuthManager.getInstance().encrypt(pubKey, "410015216");
         /*test*/
-        thread = new Thread(new Runnable() {
+
+        loginRun = new Runnable() {
             @Override
             public void run() {
                 cookie.clear();
@@ -129,7 +132,9 @@ public class MyActivity extends Activity {
                 DeliverManager.getInstance().tokens.clear();
                 DeliverManager.getInstance().tokens.putAll(tokens);
             }
-        });
+        };
     }
+
+
 
 }

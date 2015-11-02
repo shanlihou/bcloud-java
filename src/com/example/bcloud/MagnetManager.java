@@ -27,10 +27,11 @@ public class MagnetManager {
         List<Map<String , String>> ret = new ArrayList<>();
         int index = 0, start, end;
         int flag = 0;
-        String url = "http://www.btava.com/search/" + URLEncoder.encode(code);
+        String url = "http://www.bt2mag.com/search/" + URLEncoder.encode(code);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, null);
-        String pat = "http://www.btava.com/magnet/detail/hash/";
-        String sizePat = "files-size\">";
+        String pat = "http://www.bt2mag.com/magnet/detail/hash/";
+        String sizePat = ">Size:";
+        String titlePat = " title=\"";
         if (req == null || req.getContent() == null){
             return ret;
         }
@@ -47,10 +48,17 @@ public class MagnetManager {
             }
             Map<String, String>map = new HashMap<>();
             map.put("magUrl", getMagnet(req.getContent().substring(start, end)));
+
+            start = req.getContent().indexOf(titlePat, end);
+            start += titlePat.length();
+            end = req.getContent().indexOf('"', start);
+            map.put("magTitle", req.getContent().substring(start, end));
+
             start = req.getContent().indexOf(sizePat, end);
             start += sizePat.length();
-            end = req.getContent().indexOf('<', start);
+            end = req.getContent().indexOf(' ', start);
             map.put("magSize", req.getContent().substring(start, end));
+
             index = end;
             flag = 1;
             Log.d("shanlihou", map.get("magSize"));
