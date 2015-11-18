@@ -28,6 +28,7 @@ public class MyActivity extends Activity {
     private Button btnLogin;
     private Button btnList;
     private Button btnSow;
+    private Button btnFloat;
 
     private EditText editUser, editPass;
     private String mUserName;
@@ -55,6 +56,7 @@ public class MyActivity extends Activity {
         btnList = (Button)findViewById(R.id.listButton);
         btnSow = (Button)findViewById(R.id.sowGrid);
         btnMag = (Button)findViewById(R.id.magTest);
+        btnFloat = (Button)findViewById(R.id.floatButton);
 
         editUser = (EditText)findViewById(R.id.userEdit);
         editPass = (EditText)findViewById(R.id.passEdit);
@@ -78,6 +80,15 @@ public class MyActivity extends Activity {
                 //新建一个显式意图，第一个参数为当前Activity类对象，第二个参数为你要打开的Activity类
                 Intent intent = new Intent(MyActivity.this, BTActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        btnFloat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MyActivity.this, FxService.class);
+                startService(intent);
+                finish();
             }
         });
 

@@ -31,6 +31,7 @@ public class MagnetActivity extends Activity{
     private SimpleAdapter simpleAdapter;
     private String code;
     private String addUrl = null;
+    private int curIndex = -1;
     private Map<String, String> mBtRet;
     private Map<String, String> mBtAdd;
     private Bitmap codeBmp;
@@ -58,8 +59,9 @@ public class MagnetActivity extends Activity{
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 HashMap<String, String> item = (HashMap<String, String>)adapterView.getItemAtPosition(i);
+                curIndex = i;
                 addUrl = item.get("magUrl");
-                statText.setText("start");
+                statText.setText("start:" + curIndex);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -110,6 +112,23 @@ public class MagnetActivity extends Activity{
                                     mHandler.sendMessage(message);
                                 }
                             }).start();
+                        }else{
+                            curIndex++;
+                            if (curIndex < listView.getCount()){
+                                HashMap<String, String> item = (HashMap<String, String>)listView.getItemAtPosition(curIndex);
+                                addUrl = item.get("magUrl");
+                                statText.setText("start:" + curIndex);
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Map<String, String> ret = addBtTask(null);
+                                        Message message = new Message();
+                                        message.what = 2;
+                                        message.obj = ret;
+                                        mHandler.sendMessage(message);
+                                    }
+                                }).start();
+                            }
                         }
                     }
 

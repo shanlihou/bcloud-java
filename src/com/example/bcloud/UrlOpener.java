@@ -51,7 +51,7 @@ public class UrlOpener {
     }
     public HttpContent urlOpen(String strUrl, Map<String, String> map){
         HttpContent ret = null;
-        Log.d("shanlihou", strUrl);
+        //Log.d("shanlihou", strUrl);
         try {
             URL url = new URL(strUrl);
             Map<String, String> newMap = new HashMap<String, String>();
@@ -66,14 +66,14 @@ public class UrlOpener {
             urlConn.setDoInput(true);
         //    urlConn.setUseCaches(false);
             for (Map.Entry<String, String>entry : newMap.entrySet()) {
-                Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
+                //Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
             urlConn.connect();
-            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
+            //Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             String encoding = urlConn.getHeaderField("Content-encoding");
             String result = "";
-            Log.d("shanlihou", "gzip:" + encoding);
+            //Log.d("shanlihou", "gzip:" + encoding);
             if (encoding != null && encoding.equals("gzip")){
                 int num;
                 byte[] tmp = new byte[4096];
@@ -89,28 +89,28 @@ public class UrlOpener {
                 String readLine = null;
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
                 while((readLine = bufferedReader.readLine()) != null){
-                    Log.d("shanlihou", "read len:" + readLine.length());
+                    //Log.d("shanlihou", "read len:" + readLine.length());
                     result += readLine;
                 }
                 bufferedReader.close();
             }
-            Log.d("shanlihou", "length" + result.length());
+            //Log.d("shanlihou", "length" + result.length());
 
             ret = new HttpContent(urlConn.getHeaderFields(), result);
             urlConn.disconnect();
-            Log.d("shanlihou", "urlopen:" + result);
+            //Log.d("shanlihou", "urlopen:" + result);
 
         }catch(Exception e){
-            Log.d("shanlihou", "print start\n");
+            //Log.d("shanlihou", "print start\n");
             e.printStackTrace();
 
-            Log.d("shanlihou", "print end\n" + e.getMessage());
+            //Log.d("shanlihou", "print end\n" + e.getMessage());
         }
         return ret;
     }
 public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
         HttpContent ret = null;
-        Log.d("shanlihou", strUrl);
+        //Log.d("shanlihou", strUrl);
         try {
             URL url = new URL(strUrl);
             Map<String, String> newMap = new HashMap<String, String>();
@@ -123,16 +123,16 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             urlConn.setDoInput(true);
             urlConn.setUseCaches(false);
             for (Map.Entry<String, String>entry : newMap.entrySet()) {
-                Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
+                //Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
-            Log.d("shanlihou", "data:" + data);
+            //Log.d("shanlihou", "data:" + data);
             urlConn.connect();
             DataOutputStream dop = new DataOutputStream(urlConn.getOutputStream());
             dop.writeBytes(data);
             dop.flush();
             dop.close();
-            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
+            //Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             String encoding = urlConn.getHeaderField("Content-encoding");
             String result = "";
             int retCode = urlConn.getResponseCode();
@@ -168,13 +168,13 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
 
             ret = new HttpContent(urlConn.getHeaderFields(), result);
             urlConn.disconnect();
-            Log.d("shanlihou", "req.data:" + result);
+            //Log.d("shanlihou", "req.data:" + result);
 
         }catch(Exception e){
-            Log.d("shanlihou", "print start\n");
+            //Log.d("shanlihou", "print start\n");
             e.printStackTrace();
 
-            Log.d("shanlihou", "print end\n" + e.getMessage());
+            //Log.d("shanlihou", "print end\n" + e.getMessage());
         }
         return ret;
     }public Bitmap getVCode(String strUrl, Map<String, String> map){
@@ -193,11 +193,11 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
             urlConn.setDoInput(true);
         //    urlConn.setUseCaches(false);
             for (Map.Entry<String, String>entry : newMap.entrySet()) {
-                Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
+                //Log.d("shanlihou", entry.getKey() + ":" + entry.getValue());
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
             urlConn.connect();
-            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
+            //Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             bitmap = BitmapFactory.decodeStream(urlConn.getInputStream());
 
             urlConn.disconnect();
@@ -238,7 +238,7 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
                             st.getBytes().length);
             AuthManager.getInstance().printBytes(st.getBytes());
             if(bitmap == null){
-                Log.d("shanlihou", "bitmap null");
+                //Log.d("shanlihou", "bitmap null");
             }
             return bitmap;
         }

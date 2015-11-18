@@ -26,7 +26,7 @@ public class SowManager {
     public List<Map<String, Object>> getPage(int num){
         List<Map<String, Object>> ret = new ArrayList<>();
         int index = 0, start, end;
-        String url = "http://www.javtag.com/cn/currentPage/" + num;
+        String url = "http://www.javmoo.info/cn/currentPage/" + num;
         HttpContent req = UrlOpener.getInstance().urlOpen(url, null);
         if (req == null || req.getContent() == null){
             return null;

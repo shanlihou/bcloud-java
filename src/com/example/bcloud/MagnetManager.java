@@ -32,9 +32,10 @@ public class MagnetManager {
         String pat = "http://www.bt2mag.com/magnet/detail/hash/";
         String sizePat = ">Size:";
         String titlePat = " title=\"";
-        if (req == null || req.getContent() == null){
+        if (req == null || req.getContent() == null) {
             return ret;
         }
+        int count = 0;
         while(true){
             start = req.getContent().indexOf(pat, index);
             if (start == -1){
@@ -52,7 +53,9 @@ public class MagnetManager {
             start = req.getContent().indexOf(titlePat, end);
             start += titlePat.length();
             end = req.getContent().indexOf('"', start);
-            map.put("magTitle", req.getContent().substring(start, end));
+            count ++;
+            map.put("magTitle", count + req.getContent().substring(start, end));
+            Log.d("shanlihou", count + req.getContent().substring(start, end));
 
             start = req.getContent().indexOf(sizePat, end);
             start += sizePat.length();
@@ -60,8 +63,7 @@ public class MagnetManager {
             map.put("magSize", req.getContent().substring(start, end));
 
             index = end;
-            flag = 1;
-            Log.d("shanlihou", map.get("magSize"));
+            //flag = 1;
             ret.add(map);
         }
         return ret;

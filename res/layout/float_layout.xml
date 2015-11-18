@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:id="@+id/float_id"
+            android:text="float"
+            />
+    <EditText android:layout_width="150dp" android:layout_height="wrap_content"
+              android:id="@+id/searchEdit"
+              android:visibility="gone"
+            />
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:visibility="gone"
+                  android:id="@+id/floatLine"
+            >
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/btFloatSearch"
+                android:text="search"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:id="@+id/btFloatClose"
+                android:text="close"
+                />
+    </LinearLayout>
+    <ListView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:id="@+id/floatListView"
+            ></ListView>
+
+</LinearLayout>
