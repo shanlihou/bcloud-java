@@ -186,6 +186,7 @@ public class AuthManager {
         {
             int index = pubKey.indexOf("-----END PUBLIC KEY-----");
             String tmpStr = pubKey.substring(26, index);
+            Log.d("shanlihou", "pub length:" + pubKey.length());
             Log.d("shanlihou", pubKey);
             Log.d("shanlihou", tmpStr);
             String tmpFinal = tmpStr.replaceAll("\n", "");
@@ -209,7 +210,8 @@ public class AuthManager {
             printBytes(encPass);
             basePass = new BASE64Encoder().encodeBuffer(encPass).toString();
 
-            Log.d("shanlihou", basePass);
+            Log.d("shanlihou", "basePass:" + basePass);
+            Log.d("shanlihou", "baPass length:" + basePass.length());
         } catch (Exception e)
         {
             e.printStackTrace();
@@ -256,8 +258,8 @@ public class AuthManager {
         for (int i:encPass){
             print = print + i + " ";
         }
-        Log.d("shanlihou", encPass.length + "");
-        Log.d("shanlihou", print);
+        Log.d("shanlihou","length:" + encPass.length + "");
+        Log.d("shanlihou", "byte:" + print);
     }
     public int getSignVcode(){
         return 0;

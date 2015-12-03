@@ -95,8 +95,11 @@ public class MyActivity extends Activity {
         btnSow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AuthManager.getInstance().encrypt("-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvrOFZqRlGl3V+fP5Y/piYMa8o\nBIoSXKZhWNnZ7e7XXfdUBNeO90jwYKaPtfMkClQx/Pxz7eLRrHdNfsGiKkwdr04x\n+YDVZt5tO9AWZLwmmgrilWzyAU6hgEBI2xmdwoxC4AoRiZvvw3CO50NehyAAJTUb\nOy/U5dXwnzJi52p3bwIDAQAB\n-----END PUBLIC KEY-----\\n",
+                        "410015216");
+                /*
                 Intent intent = new Intent(MyActivity.this, SowActivity.class);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
