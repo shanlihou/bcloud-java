@@ -3,20 +3,42 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
+              android:background="@color/primary"
         >
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Hello World, MyActivity"
-            />
-    <EditText
+
+    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:orientation="vertical"
+            android:layout_marginRight="20dp">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:text="loin"
+                  android:textColor="@color/primary_light"
+                />
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:id="@+id/userEdit"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/primary_light" />
+    </LinearLayout>
+     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:orientation="vertical"
+            android:layout_marginRight="20dp">
+         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/userEdit"/>
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:background="@null"
             android:id="@+id/passEdit"/>
+         <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/primary_light" />
+    </LinearLayout>
+
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
