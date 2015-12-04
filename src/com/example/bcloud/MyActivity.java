@@ -9,6 +9,8 @@ import android.os.Message;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -31,6 +33,7 @@ public class MyActivity extends Activity {
     private Button btnFloat;
 
     private EditText editUser, editPass;
+    private View vUser, vPass;
     private String mUserName;
     private String mPassWord;
     private Cookie cookie;
@@ -60,9 +63,37 @@ public class MyActivity extends Activity {
 
         editUser = (EditText)findViewById(R.id.userEdit);
         editPass = (EditText)findViewById(R.id.passEdit);
+
         editUser.setText("分是否收费");
         editPass.setText("410015216");
         editPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        vUser = findViewById(R.id.vUser);
+        vPass = findViewById(R.id.vPass);
+
+        editUser.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                ViewGroup.LayoutParams params = vUser.getLayoutParams();
+                if (hasFocus == true){
+                    params.height *= 4;
+                }else{
+                    params.height /= 4;
+                }
+                vUser.setLayoutParams(params);
+            }
+        });
+        editPass.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                ViewGroup.LayoutParams params = vPass.getLayoutParams();
+                if (hasFocus == true){
+                    params.height *= 4;
+                }else{
+                    params.height /= 4;
+                }
+                vPass.setLayoutParams(params);
+            }
+        });
 
         ImageManager.getInstance().mkdir("/sdcard/bcloud/sowImage");
         btnLogin.setOnClickListener(new View.OnClickListener() {

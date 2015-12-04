@@ -3,65 +3,101 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:background="@color/primary"
+              android:background="@color/icons"
         >
+    <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+                  android:background="@color/primary_dark"
+            android:orientation="vertical">
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="60dp"
+                ></LinearLayout>
 
-    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:orientation="vertical"
-            android:layout_marginRight="20dp">
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:text="loin"
-                  android:textColor="@color/primary_light"
-                />
-        <EditText
+        <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
+                android:layout_marginLeft="60dp"
+                android:orientation="vertical"
+                android:layout_marginRight="20dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                  android:text="user"
+                      android:textColor="@color/primary"
+                    />
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@null"
+                    android:textColor="@color/icons"
+                    android:id="@+id/userEdit"/>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:id="@+id/vUser"
+                    android:background="@color/primary" />
+             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                   android:text="pass"
+                   android:textColor="@color/primary"
+                 />
+             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@null"
-                android:id="@+id/userEdit"/>
-        <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/primary_light" />
+                android:textColor="@color/icons"
+                android:id="@+id/passEdit"/>
+             <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:id="@+id/vPass"
+                    android:background="@color/primary" />
+            <LinearLayout android:layout_width="fill_parent" android:layout_height="40dp"
+                    ></LinearLayout>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="login"
+                    android:background="@null"
+                    android:id="@+id/loginButton"
+                    android:layout_gravity="right" android:textSize="50px" android:textColor="@color/icons"/>
+        </LinearLayout>
     </LinearLayout>
-     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_marginLeft="60dp"
-            android:orientation="vertical"
-            android:layout_marginRight="20dp">
-         <EditText
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@null"
-            android:id="@+id/passEdit"/>
-         <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/primary_light" />
+    <LinearLayout android:layout_width="fill_parent"
+                  android:orientation="horizontal"
+                  android:layout_marginTop="20dp"
+                  android:layout_height="wrap_content">
+        <ImageView android:layout_width="20dp"
+                   android:src="@drawable/list"
+                   android:layout_marginLeft="20dp"
+                   android:layout_height="20dp"
+                />
+        <Button android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btList"
+                android:layout_marginLeft="20dp"
+                style="@style/buttonStyle"
+                android:id="@+id/listButton"
+                />
+
     </LinearLayout>
 
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="login"
-            android:id="@+id/loginButton"
-            android:layout_gravity="right"/>
-    <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="btList"
-            android:id="@+id/listButton"
-            />
-    <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="sowGrid"
-            android:id="@+id/sowGrid"
-            />
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="magTest"
-            android:id="@+id/magTest"/>
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:text="float"
-            android:id="@+id/floatButton"
-            />
+    <LinearLayout android:layout_width="fill_parent"
+                  android:orientation="vertical"
+                  android:layout_marginLeft="60dp"
+                  android:layout_height="wrap_content">
+
+        <Button android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="sowGrid"
+                style="@style/buttonStyle"
+                android:id="@+id/sowGrid"
+                />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="magTest"
+                style="@style/buttonStyle"
+                android:id="@+id/magTest"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="float"
+                style="@style/buttonStyle"
+                android:id="@+id/floatButton"
+                />
+    </LinearLayout>
+
 
 </LinearLayout>
 

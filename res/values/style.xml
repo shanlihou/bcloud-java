@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-<style name="appTheme"
-        >
-    <item name="android:windowNoTitle">true</item>
-</style>
+    <style name="appTheme"
+            >
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="buttonStyle">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:textSize">50px</item>
+    </style>
 </resources>
