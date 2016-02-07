@@ -150,5 +150,4 @@ public class PcsManager {
         HttpContent req = UrlOpener.getInstance().urlOpen(url, map);
         return UrlOpener.getInstance().convertStringToIcon(req.getContent());
     }
-
 }

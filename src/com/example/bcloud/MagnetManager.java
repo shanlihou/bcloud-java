@@ -24,12 +24,13 @@ public class MagnetManager {
             return instance;
     }
     public List<Map<String, String>> getHomePage(String code){
+        Log.d("shanlihou", "code is:" + code);
         List<Map<String , String>> ret = new ArrayList<>();
         int index = 0, start, end;
         int flag = 0;
-        String url = "http://www.bt2mag.com/search/" + URLEncoder.encode(code);
+        String url = "http://www.btaia.com/search/" + URLEncoder.encode(code);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, null);
-        String pat = "http://www.bt2mag.com/magnet/detail/hash/";
+        String pat = "http://www.btaia.com/magnet/detail/hash/";
         String sizePat = ">Size:";
         String titlePat = " title=\"";
         if (req == null || req.getContent() == null) {
@@ -48,7 +49,7 @@ public class MagnetManager {
                 continue;
             }
             Map<String, String>map = new HashMap<>();
-            map.put("magUrl", getMagnet(req.getContent().substring(start, end)));
+            map.put("magUrl", req.getContent().substring(start, end));
 
             start = req.getContent().indexOf(titlePat, end);
             start += titlePat.length();

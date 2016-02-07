@@ -4,6 +4,7 @@
     <style name="appTheme"
             >
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@color/icons</item>
     </style>
     <style name="buttonStyle">
         <item name="android:background">@null</item>

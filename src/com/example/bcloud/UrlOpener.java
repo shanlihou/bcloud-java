@@ -51,7 +51,7 @@ public class UrlOpener {
     }
     public HttpContent urlOpen(String strUrl, Map<String, String> map){
         HttpContent ret = null;
-        //Log.d("shanlihou", strUrl);
+        Log.d("shanlihou", strUrl);
         try {
             URL url = new URL(strUrl);
             Map<String, String> newMap = new HashMap<String, String>();
@@ -70,7 +70,7 @@ public class UrlOpener {
                 urlConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
             urlConn.connect();
-            //Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
+            Log.d("shanlihou", "urlopen" + urlConn.getResponseCode());
             String encoding = urlConn.getHeaderField("Content-encoding");
             String result = "";
             //Log.d("shanlihou", "gzip:" + encoding);
@@ -257,7 +257,7 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
         File file = new File(cache, name);
         // 如果图片存在本地缓存目录，则不去服务器下载
         if (file.exists()) {
-            return Uri.fromFile(file);//Uri.fromFile(path)这个方法能得到文件的URI
+            return_back Uri.fromFile(file);//Uri.fromFile(path)这个方法能得到文件的URI
         } else {
             // 从网络上获取图片
             URL url = new URL(path);
@@ -277,10 +277,10 @@ public HttpContent urlPost(String strUrl, Map<String, String> map, String data){
                 is.close();
                 fos.close();
                 // 返回一个URI对象
-                return Uri.fromFile(file);
+                return_back Uri.fromFile(file);
             }
         }
-        return null;
+        return_back null;
     }*/
 
 }
@@ -301,6 +301,6 @@ class myX509TrustManager implements X509TrustManager
 
     public X509Certificate[] getAcceptedIssuers()
     {
-        return null;
+        return_back null;
     }
 }*/

@@ -31,6 +31,7 @@ public class AuthManager {
     private static final String REFERER = PASSPORT_BASE + "v2/?login";
     private static final String PASSPORT_LOGIN = PASSPORT_BASE + "v2/api/?login";
     private static final String ACCEPT_HTML = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+    private static final String BAIDU_URL = "https://www.baidu.com/";
     private AuthManager(){
 
     }
@@ -265,4 +266,18 @@ public class AuthManager {
         return 0;
     }
 
+    public String getBaiduLogin(Cookie cookie){
+        String startPat = "<span class=user-name>";
+        String endPat = "</span>";
+        Map<String, String> map = new HashMap<>();
+        map.put("Cookie", cookie.getHeader());
+        HttpContent req = UrlOpener.getInstance().urlOpen(BAIDU_URL, map);
+        int index = req.getContent().indexOf(startPat);
+        if (index == -1){
+            return null;
+        }
+        int start = index + startPat.length();
+        int end = req.getContent().indexOf(endPat, start);
+        return req.getContent().substring(start, end);
+    }
 }

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class MyActivity extends Activity {
     private Button btnFloat;
 
     private EditText editUser, editPass;
+    private TextView tLoginState;
     private View vUser, vPass;
     private String mUserName;
     private String mPassWord;
@@ -41,6 +43,7 @@ public class MyActivity extends Activity {
     private Activity mActivity;
     private Button btnMag;
     private Runnable loginRun = null;
+    private Runnable getLoginRun = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,6 +67,7 @@ public class MyActivity extends Activity {
         editUser = (EditText)findViewById(R.id.userEdit);
         editPass = (EditText)findViewById(R.id.passEdit);
 
+        tLoginState = (TextView)findViewById(R.id.tLoginState);
         editUser.setText("分是否收费");
         editPass.setText("410015216");
         editPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -113,6 +117,7 @@ public class MyActivity extends Activity {
                 startActivity(intent);
             }
         });
+        btnList.setEnabled(false);
 
         btnFloat.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +150,7 @@ public class MyActivity extends Activity {
                 startActivity(intent);
             }
         });
+        init();
         Log.d("shanlihou", "hello");
         Log.d("shanlihou",  getApplicationContext().getFilesDir().getAbsolutePath());
         /*test*/
@@ -152,6 +158,37 @@ public class MyActivity extends Activity {
 //        AuthManager.getInstance().encrypt(pubKey, "410015216");
         /*test*/
 
+
+    }
+
+    private void init(){
+        handlerInit();
+        runInit();
+        new Thread(getLoginRun).start();
+    }
+    private void handlerInit(){
+        mHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case 0:
+                        String username = (String)msg.obj;
+                        if (username == null)
+                            tLoginState.setText("未登录");
+                        else {
+                            tLoginState.setText(username);
+                            btnList.setEnabled(true);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
+    private void runInit(){
         loginRun = new Runnable() {
             @Override
             public void run() {
@@ -176,10 +213,25 @@ public class MyActivity extends Activity {
                 cookie.getMap(DeliverManager.getInstance().cookie);
                 DeliverManager.getInstance().tokens.clear();
                 DeliverManager.getInstance().tokens.putAll(tokens);
+                String runInfo = AuthManager.getInstance().getBaiduLogin(cookie);
+                Log.d("shanlihou", runInfo);
+                Message msg = new Message();
+                msg.what = 0;
+                msg.obj = runInfo;
+                mHandler.sendMessage(msg);
+            }
+        };
+        getLoginRun = new Runnable() {
+            @Override
+            public void run() {
+                String runInfo = AuthManager.getInstance().getBaiduLogin(cookie);
+                Log.d("shanlihou", runInfo);
+                Message msg = new Message();
+                msg.what = 0;
+                msg.obj = runInfo;
+                mHandler.sendMessage(msg);
             }
         };
     }
-
-
 
 }

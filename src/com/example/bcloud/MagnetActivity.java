@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
@@ -23,7 +24,7 @@ import java.util.Map;
 /**
  * Created by shanlihou on 15-4-30.
  */
-public class MagnetActivity extends Activity{
+public class MagnetActivity extends Activity {
     private Thread thread;
     private Handler mHandler;
     private ListView listView;
@@ -40,25 +41,28 @@ public class MagnetActivity extends Activity{
     private EditText searchText;
     private Button searchButton;
     private Runnable searchRun = null;
+    private boolean bSearch = false;
+    private ImageView imReturn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.magnet_layout);
-        listView = (ListView)findViewById(R.id.magnetList);
+        listView = (ListView) findViewById(R.id.magnetList);
         mContext = this;
         Bundle bundle = getIntent().getExtras();
         code = bundle.getString("code");
         mBtAdd = new HashMap<>();
 
-        searchText = (EditText)findViewById(R.id.searchCode);
-        searchButton = (Button)findViewById(R.id.searchButton);
-        statText = (TextView)findViewById(R.id.statText);
+        searchText = (EditText) findViewById(R.id.searchCode);
+        statText = (TextView) findViewById(R.id.statText);
+        imReturn = (ImageView)findViewById(R.id.returnBack);
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                HashMap<String, String> item = (HashMap<String, String>)adapterView.getItemAtPosition(i);
+                HashMap<String, String> item = (HashMap<String, String>) adapterView.getItemAtPosition(i);
                 curIndex = i;
                 addUrl = item.get("magUrl");
                 statText.setText("start:" + curIndex);
@@ -78,10 +82,11 @@ public class MagnetActivity extends Activity{
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                if(msg.what == 1)
-                {
-                    List<Map<String, String>> magList = (List<Map<String, String>>)msg.obj;
-                    if (magList.size() == 0){
+                if (msg.what == 1) {
+                    bSearch = false;
+                    statText.setText("search finished!");
+                    List<Map<String, String>> magList = (List<Map<String, String>>) msg.obj;
+                    if (magList.size() == 0) {
                         Map<String, String> map = new HashMap<>();
                         map.put("magUrl", "nothing");
                         map.put("magSize", "nothing");
@@ -92,14 +97,13 @@ public class MagnetActivity extends Activity{
                             new String[]{"magUrl", "magSize", "magTitle"},
                             new int[]{R.id.magUrl, R.id.magSize, R.id.magTitle});
                     listView.setAdapter(simpleAdapter);
-                    searchButton.setEnabled(true);
-                }else if(msg.what == 2){
-                    mBtRet = (Map<String, String>)msg.obj;
+                } else if (msg.what == 2) {
+                    mBtRet = (Map<String, String>) msg.obj;
                     Log.d("shanlihou", "has toast");
                     statText.setText(mBtRet.get("msg"));
                     Toast.makeText(mContext, mBtRet.get("msg"), Toast.LENGTH_SHORT);
-                    if (mBtRet.containsKey("errorCode")){
-                        if (mBtRet.get("errorCode").equals("-19")){
+                    if (mBtRet.containsKey("errorCode")) {
+                        if (mBtRet.get("errorCode").equals("-19")) {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -112,10 +116,10 @@ public class MagnetActivity extends Activity{
                                     mHandler.sendMessage(message);
                                 }
                             }).start();
-                        }else{
+                        } else {
                             curIndex++;
-                            if (curIndex < listView.getCount()){
-                                HashMap<String, String> item = (HashMap<String, String>)listView.getItemAtPosition(curIndex);
+                            if (curIndex < listView.getCount()) {
+                                HashMap<String, String> item = (HashMap<String, String>) listView.getItemAtPosition(curIndex);
                                 addUrl = item.get("magUrl");
                                 statText.setText("start:" + curIndex);
                                 new Thread(new Runnable() {
@@ -132,9 +136,9 @@ public class MagnetActivity extends Activity{
                         }
                     }
 
-                }else if(msg.what == 3){
+                } else if (msg.what == 3) {
                     getVCode(mContext, codeBmp);
-                }else if(msg.what == 4){
+                } else if (msg.what == 4) {
                     mBtAdd.clear();
                     mBtAdd.put("ids", mBtRet.get("ids"));
                     mBtAdd.put("vcode", mBtRet.get("vcode"));
@@ -142,6 +146,7 @@ public class MagnetActivity extends Activity{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
+                            bSearch = true;
                             Map<String, String> ret = addBtTask(mBtAdd);
                             Message message = new Message();
                             message.what = 2;
@@ -153,6 +158,43 @@ public class MagnetActivity extends Activity{
             }
 
         };
+        init();
+        statText.setText("start search:" + code);
+        new Thread(searchRun).start();
+
+    }
+
+    private void init() {
+        runInit();
+        viewInit();
+    }
+
+    private void viewInit(){
+        searchText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.d("shanlihou", KeyEvent.KEYCODE_ENTER + "");
+                Log.d("shanlihou", keyCode + "");
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    code = searchText.getText().toString();
+                    Log.d("shanlihou", code);
+                    if (!bSearch) {
+                        statText.setText("start search:" + code);
+                        new Thread(searchRun).start();
+                    }
+                }
+                return false;
+            }
+        });
+        imReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MagnetActivity.this.finish();
+            }
+        });
+    }
+
+    private void runInit() {
         searchRun = new Runnable() {
             @Override
             public void run() {
@@ -162,72 +204,64 @@ public class MagnetActivity extends Activity{
                 mHandler.sendMessage(message);
             }
         };
-        new Thread(searchRun).start();
-        searchButton.setEnabled(false);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                code = searchText.getText().toString();
-                new Thread(searchRun).start();
-                searchButton.setEnabled(false);
-            }
-        });
     }
 
-    private Map<String, String> addBtTask(Map<String, String> mapArg){
+    private Map<String, String> addBtTask(Map<String, String> mapArg) {
         Map<String, String> map = new HashMap<>();
         Log.d("shanlihou", "addurl:" + addUrl);
+        String magUrl = MagnetManager.getInstance().getMagnet(addUrl);
         String addRet;
-        if(mapArg == null){
-            AuthManager.getInstance().printBytes(addUrl.getBytes());
+        if (mapArg == null) {
+            AuthManager.getInstance().printBytes(magUrl.getBytes());
             List<String> selectIds = PcsManager.getInstance().queryMagnetInfo(Cookie.getInstance(), DeliverManager.tokens,
-                    addUrl, "/");
-            if (selectIds.size() == 0){
+                    magUrl, "/");
+            if (selectIds.size() == 0) {
                 map.put("msg", "not find movie");
                 map.put("errorCode", "100001");
                 return map;
             }
-            if (selectIds.get(0).equals("error")){
+            if (selectIds.get(0).equals("error")) {
                 map.put("msg", selectIds.get(2));
                 map.put("errorCode", selectIds.get(1));
                 return map;
             }
             String strIds = "";
-            for (int i = 0; i < selectIds.size(); i++){
-                if (i != 0){
+            for (int i = 0; i < selectIds.size(); i++) {
+                if (i != 0) {
                     strIds += ",";
                 }
                 strIds += selectIds.get(i);
             }
             addRet = PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens,
-                    addUrl, "/", strIds, "", "", "");
+                    magUrl, "/", strIds, "", "", "");
             map.put("ids", strIds);
 
-        }else{
+        } else {
             addRet = PcsManager.getInstance().addBtTask(Cookie.getInstance(), DeliverManager.tokens,
-                    addUrl, "/", mapArg.get("ids"), "", mapArg.get("vcode"), mapArg.get("code"));
+                    magUrl, "/", mapArg.get("ids"), "", mapArg.get("vcode"), mapArg.get("code"));
             map.put("ids", mapArg.get("ids"));
         }
         try {
             JSONTokener jsonTokener = new JSONTokener(addRet);
-            JSONObject jsonObject = (JSONObject)jsonTokener.nextValue();
+            JSONObject jsonObject = (JSONObject) jsonTokener.nextValue();
             if (!jsonObject.isNull("error_code")) {
                 map.put("errorCode", jsonObject.getInt("error_code") + "");
                 map.put("msg", jsonObject.getString("error_msg"));
-                if (jsonObject.getInt("error_code") == -19){
+                if (jsonObject.getInt("error_code") == -19) {
                     map.put("vcode", jsonObject.getString("vcode"));
                     map.put("url", jsonObject.getString("img"));
                 }
-            }else{
+            } else {
                 map.put("msg", "succeed");
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return map;
     }
-    public void getVCode(Context context, Bitmap bmp){
+
+    public void getVCode(Context context, Bitmap bmp) {
         vCodeDialog = "";
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater factory = LayoutInflater.from(context);
@@ -235,7 +269,7 @@ public class MagnetActivity extends Activity{
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle("验证码");
         builder.setView(vCodeView);
-        ImageView vCodeImg = (ImageView)vCodeView.findViewById(R.id.vcodeBmp);
+        ImageView vCodeImg = (ImageView) vCodeView.findViewById(R.id.vcodeBmp);
         vCodeImg.setImageBitmap(bmp);
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -253,3 +287,4 @@ public class MagnetActivity extends Activity{
         builder.create().show();
     }
 }
+
