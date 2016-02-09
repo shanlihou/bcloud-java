@@ -18,13 +18,17 @@ public class MagnetManager {
     public static MagnetManager getInstance(){
         if (instance == null) {
             instance = new MagnetManager();
-            return new MagnetManager();
+            return instance;
         }
         else
             return instance;
     }
     public List<Map<String, String>> getHomePage(String code){
         Log.d("shanlihou", "code is:" + code);
+        String userName = AuthManager.getInstance().getUserName();
+        if (userName != null){
+            ServerHelper.getInstance().postSearch(userName, code);
+        }
         List<Map<String , String>> ret = new ArrayList<>();
         int index = 0, start, end;
         int flag = 0;

@@ -1,4 +1,5 @@
 *.apk
 *.class
 *.swp
-
+*.iml
+.idea

@@ -44,7 +44,7 @@ public class UrlOpener {
     public static UrlOpener getInstance(){
         if (instance == null) {
             instance = new UrlOpener();
-            return new UrlOpener();
+            return instance;
         }
         else
             return instance;

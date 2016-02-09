@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/bcloud.iml" filepath="$PROJECT_DIR$/bcloud.iml" />
+      <module fileurl="file://$PROJECT_DIR$/bcloud-java.iml" filepath="$PROJECT_DIR$/bcloud-java.iml" />
     </modules>
   </component>
 </project>

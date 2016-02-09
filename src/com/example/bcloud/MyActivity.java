@@ -131,8 +131,6 @@ public class MyActivity extends Activity {
         btnSow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AuthManager.getInstance().encrypt("-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCvrOFZqRlGl3V+fP5Y/piYMa8o\nBIoSXKZhWNnZ7e7XXfdUBNeO90jwYKaPtfMkClQx/Pxz7eLRrHdNfsGiKkwdr04x\n+YDVZt5tO9AWZLwmmgrilWzyAU6hgEBI2xmdwoxC4AoRiZvvw3CO50NehyAAJTUb\nOy/U5dXwnzJi52p3bwIDAQAB\n-----END PUBLIC KEY-----\\n",
-                        "410015216");
                 /*
                 Intent intent = new Intent(MyActivity.this, SowActivity.class);
                 startActivity(intent);*/
@@ -157,7 +155,6 @@ public class MyActivity extends Activity {
 //        String pubKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwfczbrS0ZW5r+yParkgkxOrPG\ncpQnZ2Th4HzDXwoH/9O/fw7Hsr459QlEuhK6iro2e1a7OD+Si1Lq+gYr7DZ2g3WR\n6XKUBnwNgXn6aflOLpqawgrVH/j8JENvsgnwzVGbCY8vLaEgC9fRJyK5AcH9X5OO\nfPnnHmxbfoS6uBpcCwIDAQAB\n-----END PUBLIC KEY-----";
 //        AuthManager.getInstance().encrypt(pubKey, "410015216");
         /*test*/
-
 
     }
 
@@ -225,7 +222,8 @@ public class MyActivity extends Activity {
             @Override
             public void run() {
                 String runInfo = AuthManager.getInstance().getBaiduLogin(cookie);
-                Log.d("shanlihou", runInfo);
+                if (runInfo != null)
+                    Log.d("shanlihou", runInfo);
                 Message msg = new Message();
                 msg.what = 0;
                 msg.obj = runInfo;

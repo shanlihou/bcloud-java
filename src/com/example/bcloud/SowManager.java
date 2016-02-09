@@ -18,7 +18,7 @@ public class SowManager {
     public static SowManager getInstance(){
         if (instance == null) {
             instance = new SowManager();
-            return new SowManager();
+            return instance;
         }
         else
             return instance;

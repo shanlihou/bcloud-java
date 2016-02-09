@@ -17,7 +17,7 @@ public class ImageManager {
     public static ImageManager getInstance(){
         if (instance == null) {
             instance = new ImageManager();
-            return new ImageManager();
+            return instance;
         }
         else
             return instance;

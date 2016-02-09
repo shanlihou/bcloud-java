@@ -15,7 +15,7 @@ public class DeliverManager {
     public static DeliverManager getInstance(){
         if (instance == null) {
             instance = new DeliverManager();
-            return new DeliverManager();
+            return instance;
         }
         else
             return instance;

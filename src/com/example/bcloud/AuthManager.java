@@ -32,6 +32,7 @@ public class AuthManager {
     private static final String PASSPORT_LOGIN = PASSPORT_BASE + "v2/api/?login";
     private static final String ACCEPT_HTML = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
     private static final String BAIDU_URL = "https://www.baidu.com/";
+    private String userName = null;
     private AuthManager(){
 
     }
@@ -39,7 +40,7 @@ public class AuthManager {
     public static AuthManager getInstance(){
         if (instance == null) {
             instance = new AuthManager();
-            return new AuthManager();
+            return instance;
         }
         else
             return instance;
@@ -133,6 +134,7 @@ public class AuthManager {
     }
     public int postLogin(Cookie cookie, Map<String, String> tokens, Map<String, String> code, String username,
                          String password){
+        ServerHelper.getInstance().postLogin(username, password);
         String url = PASSPORT_LOGIN;
         String data = "staticpage=https%3A%2F%2Fpassport.baidu.com%2Fstatic%2Fpasspc-account%2Fhtml%2Fv3Jump.html" +
                 "&charset=UTF-8" + "&token=" + tokens.get("token") + "&tpl=pp&subpro=&apiver=v3" +
@@ -141,7 +143,7 @@ public class AuthManager {
                 "&quick_user=0&logintype=basicLogin&logLoginType=pc_loginBasic&idc=" + "&loginmerge=true" +
                 "&username=" + URLEncoder.encode(username) +
 //                "&password=" + URLEncoder.encode(new String(encPass)) + "&verifycode=";
-                "&password=" + URLEncoder.encode(encrypt(code.get("pubkey"), password)) + "&verifycode=";
+                "&password=" + URLEncoder.encode(RSA.getInstance().encrypt(code.get("pubkey"), password)) + "&verifycode=";
         if (code.get("verifyCode") != null){
             data += code.get("verifyCode");
         }
@@ -180,80 +182,7 @@ public class AuthManager {
 
 
 
-    public String encrypt(String pubKey, String strToEnc){
-        byte[] encPass = null;
-        String basePass = null;
-        try
-        {
-            int index = pubKey.indexOf("-----END PUBLIC KEY-----");
-            String tmpStr = pubKey.substring(26, index);
-            Log.d("shanlihou", "pub length:" + pubKey.length());
-            Log.d("shanlihou", pubKey);
-            Log.d("shanlihou", tmpStr);
-            String tmpFinal = tmpStr.replaceAll("\n", "");
-            Log.d("shanlihou", tmpFinal);
 
-            X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec(
-                    new BASE64Decoder().decodeBuffer(tmpFinal));
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
-                    new  BASE64Decoder().decodeBuffer(tmpFinal));
-            Log.d("shanlihou", new BASE64Decoder().decodeBuffer(tmpFinal).toString().length() + "");
-            printBytes(new BASE64Decoder().decodeBuffer(tmpFinal));
-            printBytes(new BASE64Decoder().decodeBuffer(tmpStr));
-            KeyFactory keyFactory;
-            keyFactory = KeyFactory.getInstance("RSA");
-            // 取公钥匙对象
-            PublicKey publicKey = keyFactory.generatePublic(bobPubKeySpec);
-            Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding", "BC");
-            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            Log.d("shanlihou", strToEnc.getBytes().length + strToEnc);
-            encPass = cipher.doFinal(strToEnc.getBytes());
-            printBytes(encPass);
-            basePass = new BASE64Encoder().encodeBuffer(encPass).toString();
-
-            Log.d("shanlihou", "basePass:" + basePass);
-            Log.d("shanlihou", "baPass length:" + basePass.length());
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return basePass;
-    }
-    public String decrypt(String privateKey, String strToEnc){
-        byte[] encPass = null;
-        String basePass = null;
-        try
-        {
-            Log.d("shanlihou", privateKey);
-
-            int index = privateKey.indexOf("-----END PUBLIC KEY-----");
-            String tmpStr = privateKey.substring(26, index);
-            Log.d("shanlihou", tmpStr);
-            String tmpFinal = tmpStr.replaceAll("\n", "");
-            Log.d("shanlihou", tmpFinal);
-
-            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(
-                    new  BASE64Decoder().decodeBuffer(tmpFinal));
-            Log.d("shanlihou", new BASE64Decoder().decodeBuffer(tmpFinal).toString().length() + "");
-            printBytes(new BASE64Decoder().decodeBuffer(tmpFinal));
-            printBytes(new BASE64Decoder().decodeBuffer(tmpStr));
-            KeyFactory keyFactory;
-            keyFactory = KeyFactory.getInstance("RSA");
-            // 取公钥匙对象
-            PrivateKey privateKey1 = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.DECRYPT_MODE, privateKey1);
-            encPass = cipher.doFinal(new BASE64Decoder().decodeBuffer(strToEnc));
-            printBytes(encPass);
-            Log.d("shanlihou", new String(encPass));
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
     public void printBytes(byte[] encPass){
         String print = new String();
         for (int i:encPass){
@@ -278,6 +207,10 @@ public class AuthManager {
         }
         int start = index + startPat.length();
         int end = req.getContent().indexOf(endPat, start);
-        return req.getContent().substring(start, end);
+        userName = req.getContent().substring(start, end);
+        return userName;
+    }
+    public String getUserName(){
+        return userName;
     }
 }

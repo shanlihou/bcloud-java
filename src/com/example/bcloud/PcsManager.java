@@ -31,7 +31,7 @@ public class PcsManager {
     public static PcsManager getInstance(){
         if (instance == null) {
             instance = new PcsManager();
-            return new PcsManager();
+            return instance;
         }
         else
             return instance;
