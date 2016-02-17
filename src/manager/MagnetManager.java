@@ -1,6 +1,10 @@
-package com.example.bcloud;
+package manager;
 
 import android.util.Log;
+import com.example.bcloud.AuthManager;
+import com.example.bcloud.HttpContent;
+import com.example.bcloud.ServerHelper;
+import com.example.bcloud.UrlOpener;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -26,15 +30,16 @@ public class MagnetManager {
     public List<Map<String, String>> getHomePage(String code){
         Log.d("shanlihou", "code is:" + code);
         String userName = AuthManager.getInstance().getUserName();
+        String searchServer = DeliverManager.getInstance().preference.get("searchServer");
         if (userName != null){
             ServerHelper.getInstance().postSearch(userName, code);
         }
         List<Map<String , String>> ret = new ArrayList<>();
         int index = 0, start, end;
         int flag = 0;
-        String url = "http://www.btaia.com/search/" + URLEncoder.encode(code);
+        String url = "http://" + searchServer +"/search/" + URLEncoder.encode(code);
         HttpContent req = UrlOpener.getInstance().urlOpen(url, null);
-        String pat = "http://www.btaia.com/magnet/detail/hash/";
+        String pat = searchServer + "/magnet/detail/hash/";
         String sizePat = ">Size:";
         String titlePat = " title=\"";
         if (req == null || req.getContent() == null) {
@@ -53,7 +58,7 @@ public class MagnetManager {
                 continue;
             }
             Map<String, String>map = new HashMap<>();
-            map.put("magUrl", req.getContent().substring(start, end));
+            map.put("magUrl", "http://" + req.getContent().substring(start, end));
 
             start = req.getContent().indexOf(titlePat, end);
             start += titlePat.length();

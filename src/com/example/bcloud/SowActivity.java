@@ -1,16 +1,16 @@
 package com.example.bcloud;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.*;
+import manager.SowManager;
 
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,12 +22,13 @@ public class SowActivity extends Activity {
     private GridView gridView;
     private Runnable getImageAble;
     private Handler mHandler;
-    private SimpleAdapter simpleAdapter;
+    private ImageAdapter mImageAdapter;
     private Context mContext;
     private Button btnPrev;
     private Button btnNext;
     private int page;
     private TextView statText;
+    private ProgressDialog mProgressDialog = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +47,7 @@ public class SowActivity extends Activity {
                     page--;
                 }
                 Cookie.getInstance().getDb().modifyPage(page);
-                new Thread(getImageAble).start();
+                startGetPage();
             }
         });
 
@@ -55,7 +56,7 @@ public class SowActivity extends Activity {
             public void onClick(View view) {
                 page++;
                 Cookie.getInstance().getDb().modifyPage(page);
-                new Thread(getImageAble).start();
+                startGetPage();
             }
         });
         gridView.setOnItemClickListener(new ItemClickListener());
@@ -65,11 +66,14 @@ public class SowActivity extends Activity {
                 super.handleMessage(msg);
                 if(msg.what == 1)
                 {
-                    List<Map<String, Object>> grid = (List<Map<String, Object>>)msg.obj;
+                    mProgressDialog.dismiss();
+                    List<Map<String, String>> grid = (List<Map<String, String>>)msg.obj;
                     if (grid == null){
-                        statText.setText("failed");
+                        statText.setText("解析失败");
                         return;
                     }
+                    statText.setText("解析成功,图片正在加载:第" + page + "页");
+                    /*
                     simpleAdapter = new SimpleAdapter(mContext, grid, R.layout.sow_item,
                             new String[]{"bitmap", "code"},
                             new int[]{R.id.sowImage, R.id.sowText});
@@ -84,8 +88,9 @@ public class SowActivity extends Activity {
                             }
                             return false;
                         }
-                    });
-                    gridView.setAdapter(simpleAdapter);
+                    });*/
+                    mImageAdapter = new ImageAdapter(mContext, gridView, grid);
+                    gridView.setAdapter(mImageAdapter);
                 }
             }
 
@@ -100,6 +105,11 @@ public class SowActivity extends Activity {
                 return;
             }
         };
+        startGetPage();
+    }
+    private void startGetPage(){
+        statText.setText("正在解析列表,请耐心等待");
+        mProgressDialog = ProgressDialog.show(SowActivity.this, "请稍等...", "获取数据中...", true);
         new Thread(getImageAble).start();
     }
     class  ItemClickListener implements AdapterView.OnItemClickListener {

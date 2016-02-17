@@ -1,19 +1,14 @@
-package com.example.bcloud;
+package manager;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
+import com.example.bcloud.Cookie;
+import com.example.bcloud.HttpContent;
+import com.example.bcloud.UrlOpener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;

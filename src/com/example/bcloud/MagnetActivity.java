@@ -2,6 +2,7 @@ package com.example.bcloud;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
@@ -13,7 +14,9 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.*;
-import org.json.JSONArray;
+import manager.DeliverManager;
+import manager.MagnetManager;
+import manager.PcsManager;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -43,6 +46,7 @@ public class MagnetActivity extends Activity {
     private Runnable searchRun = null;
     private boolean bSearch = false;
     private ImageView imReturn;
+    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,7 @@ public class MagnetActivity extends Activity {
                 if (msg.what == 1) {
                     bSearch = false;
                     statText.setText("search finished!");
+                    mProgressDialog.dismiss();
                     List<Map<String, String>> magList = (List<Map<String, String>>) msg.obj;
                     if (magList.size() == 0) {
                         Map<String, String> map = new HashMap<>();
@@ -159,9 +164,16 @@ public class MagnetActivity extends Activity {
 
         };
         init();
-        statText.setText("start search:" + code);
-        new Thread(searchRun).start();
+        statText.setText("idle");
+        if (!code.equals("")){
+            search();
+        }
 
+    }
+    private void search(){
+        statText.setText("search code:" + code);
+        mProgressDialog = ProgressDialog.show(MagnetActivity.this, "请稍等...", "获取数据中...", true);
+        new Thread(searchRun).start();
     }
 
     private void init() {
@@ -179,8 +191,7 @@ public class MagnetActivity extends Activity {
                     code = searchText.getText().toString();
                     Log.d("shanlihou", code);
                     if (!bSearch) {
-                        statText.setText("start search:" + code);
-                        new Thread(searchRun).start();
+                        search();
                     }
                 }
                 return false;
@@ -221,8 +232,12 @@ public class MagnetActivity extends Activity {
                 return map;
             }
             if (selectIds.get(0).equals("error")) {
-                map.put("msg", selectIds.get(2));
                 map.put("errorCode", selectIds.get(1));
+                if (map.get("errorCode").equals("36004")){
+                    map.put("msg", "请先登录，否则无法添加视频到百度云");
+                }else {
+                    map.put("msg", selectIds.get(2));
+                }
                 return map;
             }
             String strIds = "";
@@ -252,7 +267,12 @@ public class MagnetActivity extends Activity {
                     map.put("url", jsonObject.getString("img"));
                 }
             } else {
-                map.put("msg", "succeed");
+                int rapid = jsonObject.getInt("rapid_download");
+                if (rapid == 0){
+                    map.put("msg", "添加成功,但任务未下载完成,可在任务列表查看任务");
+                }else {
+                    map.put("msg", "添加成功,请到百度云中观看");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

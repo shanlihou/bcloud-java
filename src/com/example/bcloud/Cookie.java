@@ -28,12 +28,15 @@ public class Cookie {
             "(?P<val>" + "\"(?:[^\\\\\"]|\\\\.)*\"" +
             "|\\w{3},\\s[\\w\\d\\s-]{9,11}\\s[\\d:]{8}\\sGMT" +
             "|" + _LegalCharsPatt + "*))?\\s*(\\s+|;|$)");*/
-    public Cookie(Context context){
+    private Cookie(){
         cookie = new HashMap<>();
-        db = new DBHelper(context);
+        db = new DBHelper(MainApplication.getInstance().getApplicationContext());
         instance = this;
     }
     public static Cookie getInstance(){
+        if (instance == null){
+            instance = new Cookie();
+        }
         return instance;
     }
 

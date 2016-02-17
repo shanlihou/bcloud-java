@@ -3,13 +3,13 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-        >
+>
     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
                   android:background="@color/primary_dark"
-            android:orientation="vertical">
+                  android:orientation="vertical">
         <LinearLayout android:layout_width="fill_parent" android:layout_height="60dp"
                       android:orientation="horizontal"
-                >
+        >
             <TextView android:layout_width="60dp" android:layout_height="fill_parent"
                       android:text="login:"
                       android:textColor="@color/primary_light"
@@ -24,41 +24,43 @@
         </LinearLayout>
 
         <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
-                android:orientation="vertical"
-                android:layout_marginRight="20dp">
+                      android:layout_marginLeft="60dp"
+                      android:orientation="vertical"
+                      android:layout_marginRight="20dp">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                  android:text="user"
+                      android:text="user"
                       android:textColor="@color/primary"
-                    />
+            />
             <EditText
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@null"
                     android:textColor="@color/icons"
+                    android:hint="@string/user_hint"
                     android:id="@+id/userEdit"/>
             <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:id="@+id/vUser"
-                    android:background="@color/primary" />
-             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                   android:text="pass"
-                   android:textColor="@color/primary"
-                 />
-             <EditText
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:textColor="@color/icons"
-                android:id="@+id/passEdit"/>
-             <View
+                    android:background="@color/primary"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:text="pass"
+                      android:textColor="@color/primary"
+            />
+            <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@null"
+                    android:textColor="@color/icons"
+                    android:hint="@string/pass_hint"
+                    android:id="@+id/passEdit"/>
+            <View
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:id="@+id/vPass"
-                    android:background="@color/primary" />
+                    android:background="@color/primary"/>
             <LinearLayout android:layout_width="fill_parent" android:layout_height="40dp"
-                    ></LinearLayout>
+            ></LinearLayout>
 
             <Button
                     android:layout_width="wrap_content"
@@ -78,17 +80,17 @@
                    android:layout_marginLeft="20dp"
                    android:layout_height="20dp"
                    android:layout_gravity="center_vertical"
-                />
+        />
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="btList"
+                android:text="查看下载任务"
                 android:layout_marginLeft="20dp"
                 style="@style/buttonStyle"
                 android:id="@+id/listButton"
-                />
+        />
 
     </LinearLayout>
-<LinearLayout android:layout_width="fill_parent"
+    <LinearLayout android:layout_width="fill_parent"
                   android:orientation="horizontal"
                   android:layout_marginTop="20dp"
                   android:layout_height="wrap_content">
@@ -97,33 +99,46 @@
                    android:layout_marginLeft="20dp"
                    android:layout_height="20dp"
                    android:layout_gravity="center_vertical"
-                />
+        />
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="magList"
+                android:text="磁力搜索"
                 android:layout_marginLeft="20dp"
                 style="@style/buttonStyle"
                 android:id="@+id/magTest"
-                />
-
+        />
     </LinearLayout>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:orientation="horizontal"
+                  android:layout_marginTop="20dp"
+                  android:layout_height="wrap_content">
+        <ImageView android:layout_width="20dp"
+                   android:src="@drawable/list"
+                   android:layout_marginLeft="20dp"
+                   android:layout_height="20dp"
+                   android:layout_gravity="center_vertical"
+        />
+        <Button android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="番号列表"
+                style="@style/buttonStyle"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/sowGrid"
+        />
+    </LinearLayout>
+
     <LinearLayout android:layout_width="fill_parent"
                   android:orientation="vertical"
                   android:layout_marginLeft="60dp"
                   android:visibility="gone"
                   android:layout_height="wrap_content">
 
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="sowGrid"
-                style="@style/buttonStyle"
-                android:id="@+id/sowGrid"
-                />
+
         <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:text="float"
                 style="@style/buttonStyle"
                 android:id="@+id/floatButton"
-                />
+        />
     </LinearLayout>
 
 

@@ -13,6 +13,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 18 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="sun.misc.BASE64Decoder" level="application" />
+    <orderEntry type="library" name="sun.misc.BASE64Decoder" level="project" />
+    <orderEntry type="library" name="android-support-v13" level="project" />
   </component>
 </module>

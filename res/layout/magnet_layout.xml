@@ -26,6 +26,7 @@
                       android:layout_marginBottom="2dp"
                       android:imeOptions="actionSearch"
                       android:background="@null"
+                      android:hint="@string/mag_hint"
                       android:singleLine="true"
             />
             <View android:layout_width="fill_parent" android:layout_height="1dp"

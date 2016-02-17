@@ -5,7 +5,6 @@ import android.app.Service;
 /**
  * Created by shanlihou on 15-11-9.
  */
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -22,8 +21,8 @@ import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.*;
+import manager.MagnetManager;
 
 import java.util.HashMap;
 import java.util.List;

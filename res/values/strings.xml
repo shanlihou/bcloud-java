@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">bcloud</string>
+    <string name="user_hint">百度账号登陆后可将任务添加到云盘</string>
+    <string name="pass_hint">密码</string>
+    <string name="mag_hint">请输入番号或电影名字</string>
 </resources>

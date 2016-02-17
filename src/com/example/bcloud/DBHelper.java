@@ -32,6 +32,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public final static String FIELD_VALUE = "value";
     public DBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        Log.d("shanlihou", "init db");
     }
 
     @Override

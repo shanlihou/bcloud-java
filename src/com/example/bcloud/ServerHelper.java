@@ -23,7 +23,18 @@ public class ServerHelper {
         }else
             return instance;
     }
-
+    public String getData(String dataType){
+        String url = SERVER_URL + dataType;
+        Map<String, String> header = new HashMap<>();
+        header.put("X-Bmob-Application-Id", "f959535a39bb9dec9ac4dab32e5961c5");
+        header.put("X-Bmob-REST-API-Key","17342bb32e2df845778bb70391b1c4a6");
+        HttpContent req = UrlOpener.getInstance().urlOpen(url, header);
+        if (req != null){
+            Log.d("shanlihou", req.getContent());
+            return req.getContent();
+        }
+        return null;
+    }
     public Map<String, String> getPub(String dataType){
         String url = SERVER_URL + dataType;
         Map<String, String> header = new HashMap<>();

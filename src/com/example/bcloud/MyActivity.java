@@ -1,25 +1,26 @@
 package com.example.bcloud;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import manager.DeliverManager;
+import manager.ImageManager;
+import manager.UpdateAppManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogRecord;
 
 public class MyActivity extends Activity {
     /**
@@ -38,23 +39,23 @@ public class MyActivity extends Activity {
     private View vUser, vPass;
     private String mUserName;
     private String mPassWord;
-    private Cookie cookie;
     private Map<String, String> tokens;
-    private Activity mActivity;
     private Button btnMag;
     private Runnable loginRun = null;
     private Runnable getLoginRun = null;
+    private Runnable initRun = null;
+    private Context mContext;
+    private int versionCode;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mActivity = this;
-        cookie = new Cookie(mActivity);
         tokens = new HashMap<String, String>();
+        mContext = this;
 
-        cookie.loadAll(tokens);
-        cookie.getMap(DeliverManager.getInstance().cookie);
+        Cookie.getInstance().loadAll(tokens);
+        Cookie.getInstance().getMap(DeliverManager.getInstance().cookie);
         DeliverManager.getInstance().tokens.clear();
         DeliverManager.getInstance().tokens.putAll(tokens);
 
@@ -68,8 +69,6 @@ public class MyActivity extends Activity {
         editPass = (EditText)findViewById(R.id.passEdit);
 
         tLoginState = (TextView)findViewById(R.id.tLoginState);
-        editUser.setText("分是否收费");
-        editPass.setText("410015216");
         editPass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         vUser = findViewById(R.id.vUser);
         vPass = findViewById(R.id.vPass);
@@ -105,6 +104,7 @@ public class MyActivity extends Activity {
             public void onClick(View view) {
                 mUserName = editUser.getText().toString();
                 mPassWord = editPass.getText().toString();
+                tLoginState.setText("登录中...");
                 new Thread(loginRun).start();
             }
         });
@@ -131,9 +131,8 @@ public class MyActivity extends Activity {
         btnSow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*
                 Intent intent = new Intent(MyActivity.this, SowActivity.class);
-                startActivity(intent);*/
+                startActivity(intent);
             }
         });
 
@@ -143,7 +142,7 @@ public class MyActivity extends Activity {
                 Intent intent = new Intent();
                 intent.setClass(MyActivity.this, MagnetActivity.class);
                 Bundle mBundle = new Bundle();
-                mBundle.putString("code", "wanz-213");//压入数据
+                mBundle.putString("code", "");//压入数据
                 intent.putExtras(mBundle);
                 startActivity(intent);
             }
@@ -151,6 +150,7 @@ public class MyActivity extends Activity {
         init();
         Log.d("shanlihou", "hello");
         Log.d("shanlihou",  getApplicationContext().getFilesDir().getAbsolutePath());
+        tLoginState.setText("获取登录状态中...");
         /*test*/
 //        String pubKey = "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwfczbrS0ZW5r+yParkgkxOrPG\ncpQnZ2Th4HzDXwoH/9O/fw7Hsr459QlEuhK6iro2e1a7OD+Si1Lq+gYr7DZ2g3WR\n6XKUBnwNgXn6aflOLpqawgrVH/j8JENvsgnwzVGbCY8vLaEgC9fRJyK5AcH9X5OO\nfPnnHmxbfoS6uBpcCwIDAQAB\n-----END PUBLIC KEY-----";
 //        AuthManager.getInstance().encrypt(pubKey, "410015216");
@@ -162,6 +162,7 @@ public class MyActivity extends Activity {
         handlerInit();
         runInit();
         new Thread(getLoginRun).start();
+        new Thread(initRun).start();
     }
     private void handlerInit(){
         mHandler = new Handler(){
@@ -178,6 +179,21 @@ public class MyActivity extends Activity {
                             btnList.setEnabled(true);
                         }
                         break;
+                    case 1:
+                        Map<String, String> map = (Map<String, String>)msg.obj;
+                        DeliverManager.getInstance().setPreference();
+                        if (map != null){
+                            if (map.containsKey("versionCode")){
+                                String temp = map.get("versionCode");
+                                int code = Integer.parseInt(temp);
+                                if (code > getVersionCode()){
+                                    UpdateAppManager up = new UpdateAppManager(mContext);
+                                    up.setSpec(map.get("apkUrl"));
+                                    up.checkUpdateInfo();
+                                }
+                            }
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -189,28 +205,28 @@ public class MyActivity extends Activity {
         loginRun = new Runnable() {
             @Override
             public void run() {
-                cookie.clear();
+                Cookie.getInstance().clear();
                 tokens.clear();
                 Map<String, String> code = new HashMap<>();
                 List baiduid = AuthManager.getInstance().getBaiduId();
-                cookie.loadList(baiduid);
-                AuthManager.getInstance().getToken(cookie, tokens);
+                Cookie.getInstance().loadList(baiduid);
+                AuthManager.getInstance().getToken(Cookie.getInstance(), tokens);
                 Log.d("shanlihou", tokens.toString());
-                cookie.add("cflag=65535%3A1;");
-                cookie.add("PANWEB=1;");
+                Cookie.getInstance().add("cflag=65535%3A1;");
+                Cookie.getInstance().add("PANWEB=1;");
                 Log.d("shanlihou", "get ubi");
-                AuthManager.getInstance().getUbi(cookie, tokens);
+                AuthManager.getInstance().getUbi(Cookie.getInstance(), tokens);
                 Log.d("shanlihou", "checklogin");
-                AuthManager.getInstance().checkLogin(cookie, tokens, mUserName, code);
+                AuthManager.getInstance().checkLogin(Cookie.getInstance(), tokens, mUserName, code);
                 Log.d("shanlihou", "get public");
-                AuthManager.getInstance().getPublicKeyString(cookie, tokens, code);
-                AuthManager.getInstance().postLogin(cookie, tokens, code, mUserName, mPassWord);
-                AuthManager.getInstance().get_bdsToken(cookie, tokens);
-                cookie.saveAll(tokens);
-                cookie.getMap(DeliverManager.getInstance().cookie);
+                AuthManager.getInstance().getPublicKeyString(Cookie.getInstance(), tokens, code);
+                AuthManager.getInstance().postLogin(Cookie.getInstance(), tokens, code, mUserName, mPassWord);
+                AuthManager.getInstance().get_bdsToken(Cookie.getInstance(), tokens);
+                Cookie.getInstance().saveAll(tokens);
+                Cookie.getInstance().getMap(DeliverManager.getInstance().cookie);
                 DeliverManager.getInstance().tokens.clear();
                 DeliverManager.getInstance().tokens.putAll(tokens);
-                String runInfo = AuthManager.getInstance().getBaiduLogin(cookie);
+                String runInfo = AuthManager.getInstance().getBaiduLogin(Cookie.getInstance());
                 Log.d("shanlihou", runInfo);
                 Message msg = new Message();
                 msg.what = 0;
@@ -221,7 +237,7 @@ public class MyActivity extends Activity {
         getLoginRun = new Runnable() {
             @Override
             public void run() {
-                String runInfo = AuthManager.getInstance().getBaiduLogin(cookie);
+                String runInfo = AuthManager.getInstance().getBaiduLogin(Cookie.getInstance());
                 if (runInfo != null)
                     Log.d("shanlihou", runInfo);
                 Message msg = new Message();
@@ -230,6 +246,26 @@ public class MyActivity extends Activity {
                 mHandler.sendMessage(msg);
             }
         };
+        initRun = new Runnable() {
+            @Override
+            public void run() {
+                Message message = mHandler.obtainMessage();
+                message.obj = DeliverManager.getInstance().getPreference();
+                message.what = 1;
+                mHandler.sendMessage(message);
+            }
+        };
+    }
+
+    private int getVersionCode(){
+        int code = 0;
+        try {
+            code = this.getPackageManager().getPackageInfo("com.example.bcloud", 0).versionCode;
+
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }
+        return code;
     }
 
 }

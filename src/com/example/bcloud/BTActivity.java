@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import manager.DeliverManager;
+import manager.PcsManager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,10 +48,12 @@ public class BTActivity extends Activity{
                     arrayList = new ArrayList<>();
                     if (btList != null) {
                         for (int i = 0; i < btList.get("fileName").size(); i++) {
+                            String fileSize = btList.get("fileSize").get(i);
+                            String finishSize = btList.get("finishSize").get(i);
                             HashMap<String, Object> tmp = new HashMap<>();
                             tmp.put("fileName", btList.get("fileName").get(i));
-                            tmp.put("fileSize", btList.get("fileSize").get(i));
-                            tmp.put("filePercent", btList.get("finishSize").get(i));
+                            tmp.put("fileSize", getSize(fileSize));
+                            tmp.put("filePercent", getPercent(finishSize, fileSize));
                             arrayList.add(tmp);
                         }
                     }
@@ -79,6 +83,41 @@ public class BTActivity extends Activity{
         });
         thread.start();
     }
+    private String getSize(String num){
+        long n = Long.parseLong(num);
+        long mod = 0;
+        int radix = 0;
+        String ret = "";
+        while (n >= 1024){
+            radix ++;
+            mod = n % 1024;
+            n /= 1024;
+        }
+        switch (radix){
+            case 0:
+                ret += n + "bytes";
+                break;
+            case 1:
+                ret += n + "." + mod + "Kb";
+                break;
+            case 2:
+                ret += n + "." + mod + "Mb";
+                break;
+            case 3:
+                ret += n + "." + mod + "Gb";
+                break;
+            case 4:
+                ret += n + "." + mod + "Tb";
+                break;
+        }
+        return ret;
+    }
 
-
+    private String getPercent(String num1, String num2){
+        double n1 = Double.parseDouble(num1);
+        double n2 = Double.parseDouble(num2);
+        double result = n1 * 100 / n2;
+        DecimalFormat df = new DecimalFormat(".##");
+        return df.format(result) + "%";
+    }
 }
