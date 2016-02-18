@@ -89,7 +89,11 @@ public class MagnetActivity extends Activity {
                 if (msg.what == 1) {
                     bSearch = false;
                     statText.setText("search finished!");
-                    mProgressDialog.dismiss();
+                    Log.d("shanlihou", "end dialog");
+                    if (mProgressDialog != null){
+                        mProgressDialog.dismiss();
+                        mProgressDialog = null;
+                    }
                     List<Map<String, String>> magList = (List<Map<String, String>>) msg.obj;
                     if (magList.size() == 0) {
                         Map<String, String> map = new HashMap<>();
@@ -170,9 +174,24 @@ public class MagnetActivity extends Activity {
         }
 
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        /*if (mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.dismiss();
+            return true;
+        }*/
+        return super.onKeyDown(keyCode, event);
+
+    }
+
     private void search(){
         statText.setText("search code:" + code);
-        mProgressDialog = ProgressDialog.show(MagnetActivity.this, "请稍等...", "获取数据中...", true);
+        Log.d("shanlihou", "start dialog");
+        if (mProgressDialog == null){
+            mProgressDialog = ProgressDialog.show(MagnetActivity.this, "请稍等...", "获取数据中...", true);
+            mProgressDialog.setCancelable(true);
+        }
         new Thread(searchRun).start();
     }
 
